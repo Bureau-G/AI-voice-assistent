@@ -9,157 +9,169 @@
 <title>AI Voice Assistent</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0a0f;--s:#13131a;--s2:#1c1c26;--b:rgba(255,255,255,0.08);--b2:rgba(255,255,255,0.15);--a:#4f8ef7;--a2:#7c5cfc;--g:#3de8a0;--am:#f5a623;--r:#f05050;--dr:#ff6b35;--t:#f0f0f5;--t2:#8888aa;--t3:#55556a;}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t);font-family:'Syne',sans-serif;}
-#app{height:100%;display:flex;flex-direction:column;}
+:root {
+  --bg:#0a0a0f; --s:#13131a; --s2:#1c1c26;
+  --b:rgba(255,255,255,.08); --b2:rgba(255,255,255,.15);
+  --a:#4f8ef7; --a2:#7c5cfc; --g:#3de8a0;
+  --am:#f5a623; --r:#f05050; --dr:#ff6b35;
+  --t:#f0f0f5; --t2:#8888aa; --t3:#55556a;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--t); font-family:'Syne',sans-serif; }
+#app { height:100%; display:flex; flex-direction:column; }
 
-.hdr{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--b);flex-shrink:0;}
-.hdr-title{font-size:15px;font-weight:800;}
-.hdr-title span{color:var(--a);}
-.hdr-sess{font-family:'DM Mono',monospace;font-size:10px;color:var(--t2);background:var(--s2);border:1px solid var(--b);padding:3px 9px;border-radius:20px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* ── HEADER ── */
+.hdr { padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--b); flex-shrink:0; }
+.hdr-l { font-size:15px; font-weight:800; }
+.hdr-l span { color:var(--a); }
+.hdr-r { font-family:'DM Mono',monospace; font-size:10px; color:var(--t2); background:var(--s2); border:1px solid var(--b); padding:3px 9px; border-radius:20px; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
-.pg{flex:1;overflow-y:auto;display:none;flex-direction:column;padding:16px;gap:12px;}
-.pg.on{display:flex;}
+/* ── PAGINA'S ── */
+.pg { flex:1; overflow-y:auto; display:none; flex-direction:column; padding:16px; gap:12px; }
+.pg.on { display:flex; }
 
-h2{font-size:20px;font-weight:800;letter-spacing:-0.02em;}
-h2 span{color:var(--a);}
-.sub{font-size:12px;color:var(--t2);line-height:1.6;}
+/* ── FORMULIER ELEMENTEN ── */
+.lbl { font-size:10px; font-weight:700; color:var(--t3); letter-spacing:.08em; text-transform:uppercase; margin-bottom:5px; }
+.fg { display:flex; flex-direction:column; }
+input[type=text], input[type=password] {
+  background:var(--s); border:1px solid var(--b2); color:var(--t);
+  font-family:'DM Mono',monospace; font-size:13px;
+  padding:10px 12px; border-radius:8px; outline:none; width:100%;
+  transition:border-color .2s;
+}
+input:focus { border-color:var(--a); }
+input::placeholder { color:var(--t3); }
+.row { display:flex; gap:8px; }
+.row input { flex:1; }
+.div { height:1px; background:var(--b); flex-shrink:0; }
 
-.lbl{font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;}
-.fg{display:flex;flex-direction:column;}
-input{background:var(--s);border:1px solid var(--b2);color:var(--t);font-family:'DM Mono',monospace;font-size:13px;padding:10px 12px;border-radius:8px;outline:none;width:100%;}
-input:focus{border-color:var(--a);}
-input::placeholder{color:var(--t3);}
+/* ── KNOPPEN ── */
+.btn { font-family:'Syne',sans-serif; font-weight:800; font-size:13px; padding:10px 16px; border-radius:8px; border:none; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.btn-a { background:var(--a); color:#fff; }
+.btn-a:hover { background:#3a7de8; }
+.btn-g { background:var(--s2); color:var(--t2); border:1px solid var(--b); }
+.btn-g:hover { background:var(--s); color:var(--t); }
+.btn-start { width:100%; padding:14px; font-size:15px; border-radius:12px; background:linear-gradient(135deg,var(--a),var(--a2)); color:#fff; border:none; font-family:'Syne',sans-serif; font-weight:800; cursor:pointer; transition:opacity .15s; }
+.btn-start:disabled { opacity:.3; cursor:not-allowed; }
+.btn-soft { width:100%; padding:11px; font-size:13px; border-radius:8px; background:var(--s2); color:var(--t); border:1px solid var(--b2); font-family:'Syne',sans-serif; font-weight:700; cursor:pointer; transition:all .15s; }
+.btn-soft:hover { border-color:var(--g); color:var(--g); }
+.btn-soft.purple { border-color:rgba(124,92,252,.4); color:var(--a2); }
+.btn-soft.purple:hover { border-color:var(--a2); background:rgba(124,92,252,.1); }
 
-.mode-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.mc{padding:12px 10px;border-radius:8px;border:2px solid var(--b);cursor:pointer;text-align:center;transition:all .15s;}
-.mc.sel-h{border-color:var(--g);background:rgba(61,232,160,.07);}
-.mc.sel-d{border-color:var(--dr);background:rgba(255,107,53,.07);}
-.mc-ico{font-size:24px;margin-bottom:4px;}
-.mc-t{font-size:12px;font-weight:800;}
-.mc-s{font-size:10px;color:var(--t2);margin-top:2px;line-height:1.3;}
+/* ── HINT TEKST ── */
+.hint { font-size:11px; font-family:'DM Mono',monospace; text-align:center; min-height:16px; color:var(--am); }
+.hint.ok { color:var(--g); }
 
-.slist{display:flex;flex-direction:column;gap:6px;}
-.si{background:var(--s);border:1px solid var(--b);border-radius:8px;padding:9px 11px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border-color .15s;}
-.si:hover,.si.sel{border-color:var(--a);background:rgba(79,142,247,.08);}
-.si-n{font-size:13px;font-weight:700;}
-.si-m{font-family:'DM Mono',monospace;font-size:10px;color:var(--t2);margin-top:1px;}
-.si-del{background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px;padding:3px 5px;}
-.si-del:hover{color:var(--r);}
-.add-row{display:flex;gap:7px;}
-.add-row input{flex:1;}
+/* ── MODUS KAARTEN ── */
+.mc-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.mc { padding:12px 10px; border-radius:8px; border:2px solid var(--b); cursor:pointer; text-align:center; transition:all .15s; user-select:none; }
+.mc:hover { border-color:var(--b2); }
+.mc.h { border-color:var(--g); background:rgba(61,232,160,.07); }
+.mc.d { border-color:var(--dr); background:rgba(255,107,53,.07); }
+.mc-i { font-size:24px; margin-bottom:4px; }
+.mc-t { font-size:12px; font-weight:800; }
+.mc-s { font-size:10px; color:var(--t2); margin-top:2px; line-height:1.3; }
 
-.btn{font-family:'Syne',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;}
-.ba{background:var(--a);color:#fff;}
-.ba:hover{background:#3a7de8;}
-.bg{background:var(--s2);color:var(--t2);border:1px solid var(--b);}
-.bg:hover{background:var(--s);color:var(--t);}
-.bstart{width:100%;padding:14px;font-size:15px;border-radius:12px;background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:none;font-family:'Syne',sans-serif;font-weight:800;cursor:pointer;}
-.bstart:disabled{opacity:.3;cursor:not-allowed;}
-.bkenn{width:100%;padding:11px;font-size:13px;border-radius:8px;background:var(--s2);color:var(--t);border:1px solid var(--b2);font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;}
-.bkenn:hover{border-color:var(--g);color:var(--g);}
+/* ── SESSIE LIJST ── */
+.slist { display:flex; flex-direction:column; gap:6px; }
+.si { background:var(--s); border:1px solid var(--b); border-radius:8px; padding:9px 11px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; transition:border-color .15s; }
+.si:hover, .si.on { border-color:var(--a); background:rgba(79,142,247,.08); }
+.si-n { font-size:13px; font-weight:700; }
+.si-m { font-family:'DM Mono',monospace; font-size:10px; color:var(--t2); margin-top:1px; }
+.si-x { background:none; border:none; color:var(--t3); cursor:pointer; font-size:13px; padding:3px 6px; }
+.si-x:hover { color:var(--r); }
 
-.hint{font-size:11px;font-family:'DM Mono',monospace;text-align:center;min-height:16px;color:var(--am);}
-.hint.ok{color:var(--g);}
+/* ── BERICHTEN ── */
+#msgs { flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px; }
+.msg { padding:10px 13px; border-radius:8px; font-size:14px; line-height:1.65; max-width:90%; animation:fu .2s ease; }
+@keyframes fu { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+.msg.u { background:linear-gradient(135deg,rgba(79,142,247,.18),rgba(124,92,252,.12)); border:1px solid rgba(79,142,247,.25); align-self:flex-end; }
+.msg.a { background:var(--s); border:1px solid var(--b); align-self:flex-start; }
+.msg.s { background:rgba(245,166,35,.08); border:1px solid rgba(245,166,35,.2); color:var(--am); align-self:center; font-size:11px; font-family:'DM Mono',monospace; text-align:center; border-radius:20px; padding:4px 12px; max-width:100%; }
+.msg.c { background:rgba(255,107,53,.08); border:1px solid rgba(255,107,53,.2); color:var(--dr); align-self:center; font-size:11px; font-family:'DM Mono',monospace; text-align:center; border-radius:20px; padding:4px 12px; max-width:100%; }
+.empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
+.ei { font-size:34px; opacity:.2; }
+.et { font-size:12px; color:var(--t3); text-align:center; line-height:1.7; }
 
-.div{height:1px;background:var(--b);}
+/* ── HAND PANEEL ── */
+.hp { flex-shrink:0; background:var(--s); border-top:1px solid var(--b); padding:14px 14px 26px; display:flex; flex-direction:column; align-items:center; gap:9px; }
+.tb { width:100%; max-width:320px; background:rgba(245,166,35,.06); border:1px solid rgba(245,166,35,.2); border-radius:8px; padding:7px 10px; font-size:12px; color:var(--am); font-family:'DM Mono',monospace; line-height:1.5; display:none; word-break:break-word; }
+.tb.on { display:block; }
+.rb { width:86px; height:86px; border-radius:50%; border:2px solid var(--b2); background:var(--s2); display:flex; align-items:center; justify-content:center; font-size:30px; cursor:pointer; user-select:none; transition:all .15s; }
+.rb.ready { border-color:var(--g); background:rgba(61,232,160,.1); }
+.rb.rec { border-color:var(--r); background:rgba(240,80,80,.15); animation:rp 1s ease-in-out infinite; }
+.rb.proc { border-color:var(--a2); background:rgba(124,92,252,.1); }
+.rb.spk { border-color:var(--a); background:rgba(79,142,247,.1); animation:rp .8s ease-in-out infinite; }
+.rb.off { opacity:.35; pointer-events:none; }
+@keyframes rp { 0%,100% { box-shadow:0 0 0 0 rgba(61,232,160,.3); } 50% { box-shadow:0 0 0 12px rgba(61,232,160,0); } }
+.hs { font-size:12px; color:var(--t2); text-align:center; min-height:16px; max-width:260px; line-height:1.4; }
+.hh { font-size:10px; color:var(--t3); font-family:'DM Mono',monospace; }
+.br { display:flex; gap:7px; width:100%; max-width:280px; }
+.br button { flex:1; font-size:11px; padding:8px; }
+.dl-btn { width:100%; max-width:280px; padding:9px; font-size:12px; border-radius:8px; background:rgba(124,92,252,.1); color:var(--a2); border:1px solid rgba(124,92,252,.25); font-family:'Syne',sans-serif; font-weight:700; cursor:pointer; }
 
-/* CHAT */
-#chat{padding:0;}
-.msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
-.msg{padding:10px 13px;border-radius:8px;font-size:14px;line-height:1.65;max-width:90%;animation:fu .2s ease;}
-@keyframes fu{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
-.msg.user{background:linear-gradient(135deg,rgba(79,142,247,.18),rgba(124,92,252,.12));border:1px solid rgba(79,142,247,.25);align-self:flex-end;}
-.msg.assistant{background:var(--s);border:1px solid var(--b);align-self:flex-start;}
-.msg.sys{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:var(--am);align-self:center;font-size:11px;font-family:'DM Mono',monospace;text-align:center;border-radius:20px;padding:4px 12px;max-width:100%;}
-.msg.cmd{background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.2);color:var(--dr);align-self:center;font-size:11px;font-family:'DM Mono',monospace;text-align:center;border-radius:20px;padding:4px 12px;max-width:100%;}
-.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
-.empty-ico{font-size:34px;opacity:.2;}
-.empty-t{font-size:12px;color:var(--t3);text-align:center;line-height:1.7;}
+/* ── RIJD PANEEL ── */
+.dp { flex-shrink:0; background:#0d0907; border-top:2px solid rgba(255,107,53,.3); padding:14px 14px 26px; display:flex; flex-direction:column; align-items:center; gap:9px; }
+.dr { width:100px; height:100px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; border:3px solid rgba(255,255,255,.08); transition:all .3s; }
+.dr.idle { border-color:rgba(255,255,255,.08); }
+.dr.listen { border-color:var(--a); animation:dpulse 2s ease-in-out infinite; }
+.dr.rec { border-color:var(--r); animation:dpulse .7s ease-in-out infinite; }
+.dr.proc { border-color:var(--a2); animation:dspin 1.5s linear infinite; }
+.dr.spk { border-color:var(--dr); animation:dpulse .9s ease-in-out infinite; }
+.dr.conf { border-color:var(--am); animation:dpulse 1s ease-in-out infinite; }
+@keyframes dpulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } }
+@keyframes dspin { to { transform:rotate(360deg); } }
+.di { font-size:28px; }
+.dl { font-size:9px; color:var(--t2); font-family:'DM Mono',monospace; }
+.ds { font-size:13px; font-weight:700; text-align:center; max-width:270px; line-height:1.5; }
+.dd { font-size:10px; color:var(--t2); text-align:center; max-width:270px; font-family:'DM Mono',monospace; line-height:1.4; }
+.pills { display:flex; gap:5px; flex-wrap:wrap; justify-content:center; }
+.pill { font-family:'DM Mono',monospace; font-size:9px; color:var(--t3); background:var(--s2); border:1px solid var(--b); padding:2px 7px; border-radius:20px; }
+.pill.on { color:var(--dr); border-color:rgba(255,107,53,.4); background:rgba(255,107,53,.08); }
 
-/* HAND PANEEL */
-.hpanel{flex-shrink:0;background:var(--s);border-top:1px solid var(--b);padding:14px 14px 26px;display:flex;flex-direction:column;align-items:center;gap:9px;}
-.tbox{width:100%;max-width:320px;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--am);font-family:'DM Mono',monospace;line-height:1.5;display:none;word-break:break-word;}
-.tbox.on{display:block;}
-.rbtn{width:86px;height:86px;border-radius:50%;border:2px solid var(--b2);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;user-select:none;transition:transform .1s;}
-.rbtn:active{transform:scale(.93);}
-.rbtn.ready{border-color:var(--g);background:rgba(61,232,160,.1);}
-.rbtn.rec{border-color:var(--r);background:rgba(240,80,80,.15);animation:rp 1s ease-in-out infinite;}
-.rbtn.proc{border-color:var(--a2);background:rgba(124,92,252,.1);}
-.rbtn.spk{border-color:var(--a);background:rgba(79,142,247,.1);animation:rp .8s ease-in-out infinite;}
-.rbtn.off{opacity:.3;pointer-events:none;}
-@keyframes rp{0%,100%{box-shadow:0 0 0 0 rgba(61,232,160,.3);}50%{box-shadow:0 0 0 12px rgba(61,232,160,0);}}
-.hstat{font-size:12px;color:var(--t2);text-align:center;min-height:16px;max-width:260px;line-height:1.4;}
-.hhint{font-size:10px;color:var(--t3);font-family:'DM Mono',monospace;}
-.brow{display:flex;gap:7px;width:100%;max-width:280px;}
-.brow button{flex:1;font-size:11px;padding:8px;}
+/* ── TOAST ── */
+#toast { position:fixed; bottom:110px; left:50%; transform:translateX(-50%); background:var(--s2); border:1px solid var(--b2); color:var(--t); font-size:12px; font-family:'DM Mono',monospace; padding:8px 16px; border-radius:20px; z-index:9999; max-width:300px; text-align:center; opacity:0; transition:opacity .3s; pointer-events:none; }
 
-/* RIJD PANEEL */
-.dpanel{flex-shrink:0;background:#0d0907;border-top:2px solid rgba(255,107,53,.3);padding:14px 14px 26px;display:flex;flex-direction:column;align-items:center;gap:9px;}
-.dring{width:100px;height:100px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:3px solid rgba(255,255,255,.08);transition:all .3s;}
-.dring.idle{border-color:rgba(255,255,255,.08);}
-.dring.listen{border-color:var(--a);animation:dp 2s ease-in-out infinite;}
-.dring.rec{border-color:var(--r);animation:dp .7s ease-in-out infinite;}
-.dring.proc{border-color:var(--a2);animation:ds 1.5s linear infinite;}
-.dring.spk{border-color:var(--dr);animation:dp .9s ease-in-out infinite;}
-.dring.conf{border-color:var(--am);animation:dp 1s ease-in-out infinite;}
-@keyframes dp{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
-@keyframes ds{to{transform:rotate(360deg);}}
-.dico{font-size:28px;}
-.dlbl{font-size:9px;color:var(--t2);font-family:'DM Mono',monospace;}
-.dstat{font-size:13px;font-weight:700;text-align:center;max-width:270px;line-height:1.5;}
-.dsub{font-size:10px;color:var(--t2);text-align:center;max-width:270px;font-family:'DM Mono',monospace;line-height:1.4;}
-.cpills{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
-.cp{font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);background:var(--s2);border:1px solid var(--b);padding:2px 7px;border-radius:20px;}
-.cp.on{color:var(--dr);border-color:rgba(255,107,53,.4);background:rgba(255,107,53,.08);}
-
-::-webkit-scrollbar{width:3px;}
-::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
-.drive-badge{display:flex;align-items:center;gap:6px;background:rgba(61,232,160,.06);border:1px solid rgba(61,232,160,.2);border-radius:8px;padding:8px 11px;font-size:11px;color:var(--g);font-family:'DM Mono',monospace;}
-.drive-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--g);flex-shrink:0;}
-.drive-badge .dot.off{background:var(--t3);}
-.drive-badge.err{border-color:rgba(240,80,80,.2);background:rgba(240,80,80,.06);color:var(--r);}
-.bexp{width:100%;padding:10px;font-size:12px;border-radius:8px;background:rgba(79,142,247,.1);color:var(--a);border:1px solid rgba(79,142,247,.25);font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;transition:all .15s;}
-.bexp:hover{background:rgba(79,142,247,.2);}
-.bexp:disabled{opacity:.4;cursor:not-allowed;}
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-thumb { background:var(--b2); border-radius:2px; }
 </style>
 </head>
 <body>
 <div id="app">
 
+<!-- HEADER -->
 <div class="hdr">
-  <div class="hdr-title">AI Voice <span>Assistent</span></div>
-  <div class="hdr-sess" id="hdr-sess">—</div>
+  <div class="hdr-l">AI Voice <span>Assistent</span></div>
+  <div class="hdr-r" id="hdr-sess">—</div>
 </div>
 
-<!-- ══ SETUP ══ -->
+<!-- ══ SETUP PAGINA ══ -->
 <div class="pg on" id="pg-setup">
-  <h2>Jouw<br><span>AI assistent</span></h2>
 
   <div class="fg">
     <div class="lbl">Anthropic sleutel (Claude)</div>
-    <input type="password" id="in-claude" placeholder="sk-ant-..."/>
+    <input type="password" id="in-ck" placeholder="sk-ant-..." autocomplete="off"/>
   </div>
+
   <div class="fg">
     <div class="lbl">OpenAI sleutel (Whisper)</div>
-    <input type="password" id="in-openai" placeholder="sk-..."/>
+    <input type="password" id="in-ok" placeholder="sk-..." autocomplete="off"/>
   </div>
 
   <div class="div"></div>
 
   <div class="fg">
     <div class="lbl">Modus</div>
-    <div class="mode-row">
-      <div class="mc sel-h" id="mc-hand" onclick="pickMode('hand')">
-        <div class="mc-ico">📱</div>
+    <div class="mc-row">
+      <div class="mc h" id="mc-h" onclick="setMode('hand')">
+        <div class="mc-i">📱</div>
         <div class="mc-t">Handmodus</div>
-        <div class="mc-s">Knop ingedrukt. Transcript op scherm.</div>
+        <div class="mc-s">Knop ingedrukt houden. Transcript op scherm.</div>
       </div>
-      <div class="mc" id="mc-drive" onclick="pickMode('drive')">
-        <div class="mc-ico">🚗</div>
+      <div class="mc" id="mc-d" onclick="setMode('drive')">
+        <div class="mc-i">🚗</div>
         <div class="mc-t">Rijmodus</div>
-        <div class="mc-s">Volledig spraak­gestuurd. Handsfree.</div>
+        <div class="mc-s">Volledig spraakgestuurd. Handsfree.</div>
       </div>
     </div>
   </div>
@@ -170,521 +182,674 @@ input::placeholder{color:var(--t3);}
     <div class="lbl">Sessies</div>
     <div class="slist" id="slist"></div>
   </div>
+
   <div class="fg">
-    <div class="lbl">Nieuwe sessie aanmaken</div>
-    <div class="add-row">
-      <input type="text" id="in-sess" placeholder="Geef je sessie een naam..."/>
-      <button class="btn ba" id="btn-add">+</button>
+    <div class="lbl">Nieuwe sessie</div>
+    <div class="row">
+      <input type="text" id="in-sess" placeholder="Geef een naam..."/>
+      <button class="btn btn-a" id="btn-add">+</button>
     </div>
   </div>
 
-  <button class="bstart" id="btn-start" disabled>Starten →</button>
-  <div class="hint" id="hint-ready">Vul beide sleutels in en maak een sessie aan</div>
+  <button class="btn-start" id="btn-start" disabled>Starten →</button>
+  <div class="hint" id="hint"></div>
 
   <div class="div"></div>
 
-  <div class="fg">
-    <div class="lbl">Kennismaking</div>
-    <button class="bkenn" id="btn-kenn">🤝 Start kennismakingsgesprek</button>
-    <button class="bkenn" id="btn-master" style="margin-top:6px;border-color:rgba(124,92,252,.4);color:var(--a2);">🧠 Start masterprompt interview</button>
+  <div class="fg" style="gap:6px;">
+    <div class="lbl">Speciale sessies</div>
+    <button class="btn-soft" id="btn-kenn">🤝 Kennismakingsgesprek</button>
+    <button class="btn-soft purple" id="btn-master">🧠 Masterprompt interview</button>
   </div>
 
-  <div class="fg" id="profiel-wrap" style="display:none">
+  <div class="fg" id="profiel-wrap" style="display:none;">
     <div class="lbl">Jouw profiel</div>
     <div id="profiel-box" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--t2);background:var(--s);border:1px solid var(--b);border-radius:8px;padding:9px 11px;line-height:1.9;"></div>
   </div>
 
-  <div class="div"></div>
-
-  <div class="fg">
-    <div class="lbl">Google Drive sync</div>
-    <div class="drive-badge err" id="drive-badge">
-      <div class="dot off" id="drive-dot"></div>
-      <span id="drive-badge-txt">Niet verbonden — klik om in te loggen</span>
-    </div>
-    <div style="display:flex;gap:7px;margin-top:7px;">
-      <input type="text" id="in-client-id" placeholder="Google OAuth Client ID (optioneel)" style="font-size:11px;padding:8px 10px;"/>
-    </div>
-    <button class="bexp" id="btn-drive-auth" style="margin-top:6px;">🔗 Verbind met Google Drive</button>
-    <button class="bexp" id="btn-drive-export" style="margin-top:5px;display:none;" disabled>📤 Exporteer sessie naar Drive</button>
-    <button class="bexp" id="btn-download-md" style="margin-top:5px;background:rgba(124,92,252,.1);color:var(--a2);border-color:rgba(124,92,252,.25);">💾 Download sessie als .md bestand</button>
-  </div>
 </div>
 
-<!-- ══ CHAT ══ -->
+<!-- ══ CHAT PAGINA ══ -->
 <div class="pg" id="pg-chat">
-  <div class="msgs" id="msgs"></div>
+  <div id="msgs"></div>
 
   <!-- Handmodus paneel -->
-  <div class="hpanel" id="hpanel" style="display:none">
-    <div class="tbox" id="tbox"></div>
-    <div class="rbtn off" id="rbtn">🎙️</div>
-    <div class="hstat" id="hstat">Even geduld...</div>
-    <div class="hhint" id="hhint"></div>
-    <div class="brow">
-      <button class="btn bg" onclick="goBack()">← Terug</button>
-      <button class="btn bg" onclick="clearChat()">Wis chat</button>
+  <div class="hp" id="hp" style="display:none;">
+    <div class="tb" id="tb"></div>
+    <div class="rb off" id="rb">🎙️</div>
+    <div class="hs" id="hs">Even geduld...</div>
+    <div class="hh" id="hh"></div>
+    <div class="br">
+      <button class="btn btn-g" onclick="goBack()">← Terug</button>
+      <button class="btn btn-g" onclick="clearChat()">Wis chat</button>
     </div>
-    <div style="display:flex;gap:6px;max-width:300px;width:100%;">
-      <button class="bexp" id="btn-export-hand" onclick="exportToDrive()" style="display:none;flex:1;">📤 Drive</button>
-      <button class="bexp" onclick="downloadMarkdown()" style="flex:1;background:rgba(124,92,252,.1);color:var(--a2);border-color:rgba(124,92,252,.25);">💾 Download</button>
-    </div>
+    <button class="dl-btn" onclick="downloadMd()">💾 Download als .md</button>
   </div>
 
   <!-- Rijmodus paneel -->
-  <div class="dpanel" id="dpanel" style="display:none">
-    <div class="dring idle" id="dring">
-      <div class="dico" id="dico">🚗</div>
-      <div class="dlbl" id="dlbl">WACHT</div>
+  <div class="dp" id="dp" style="display:none;">
+    <div class="dr idle" id="dr">
+      <div class="di" id="di">🚗</div>
+      <div class="dl" id="dl">WACHT</div>
     </div>
-    <div class="dstat" id="dstat">Zeg "Start bericht" om te beginnen</div>
-    <div class="dsub" id="dsub">Of "Wissel sessie" / "Nieuwe sessie [naam]"</div>
-    <div class="cpills">
-      <div class="cp" id="cp1">Start bericht</div>
-      <div class="cp" id="cp2">Stop bericht</div>
-      <div class="cp" id="cp3">Wissel sessie</div>
-      <div class="cp" id="cp4">Nieuwe sessie</div>
+    <div class="ds" id="ds">Zeg "Start bericht" om te beginnen</div>
+    <div class="dd" id="dd">Of "Wissel sessie" / "Nieuwe sessie [naam]"</div>
+    <div class="pills">
+      <div class="pill" id="p1">Start bericht</div>
+      <div class="pill" id="p2">Stop bericht</div>
+      <div class="pill" id="p3">Wissel sessie</div>
+      <div class="pill" id="p4">Nieuwe sessie</div>
     </div>
-    <div class="brow">
-      <button class="btn bg" onclick="goBack()">← Terug</button>
-      <button class="btn bg" onclick="clearChat()">Wis chat</button>
+    <div class="br">
+      <button class="btn btn-g" onclick="goBack()">← Terug</button>
+      <button class="btn btn-g" onclick="clearChat()">Wis chat</button>
     </div>
-    <div style="display:flex;gap:6px;max-width:300px;width:100%;">
-      <button class="bexp" id="btn-export-drive" onclick="exportToDrive()" style="display:none;flex:1;">📤 Drive</button>
-      <button class="bexp" onclick="downloadMarkdown()" style="flex:1;background:rgba(124,92,252,.1);color:var(--a2);border-color:rgba(124,92,252,.25);">💾 Download</button>
-    </div>
+    <button class="dl-btn" onclick="downloadMd()">💾 Download als .md</button>
   </div>
 </div>
 
-</div><!-- #app -->
+</div>
+<div id="toast"></div>
+
 <script>
-// ── STORE ──────────────────────────────────────────────────────
-const STORE = 'aivoice_v2';
+// ══════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════
+const KEY = 'aiva3';
 let D = {};
-try { D = JSON.parse(localStorage.getItem(STORE) || '{}'); } catch(e) { D = {}; }
-if (!D.sessions) D.sessions = [];
-if (!D.profiel)  D.profiel  = {};
-if (!D.mode)     D.mode     = 'hand';
-if (!D.ck)       D.ck       = '';
-if (!D.ok)       D.ok       = '';
+try { D = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e) {}
+D.sessions   = D.sessions   || [];
+D.profiel    = D.profiel    || {};
+D.mode       = D.mode       || 'hand';
+D.ck         = D.ck         || '';
+D.ok         = D.ok         || '';
+D.masterQ    = D.masterQ    || {};
 
-function save() { try { localStorage.setItem(STORE, JSON.stringify(D)); } catch(e) {} }
-
-// ── DOM helpers ────────────────────────────────────────────────
-const $  = id => document.getElementById(id);
+const sv = () => { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch(e) {} };
+const el = id => document.getElementById(id);
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-// ── SETUP REFS ─────────────────────────────────────────────────
-const inClaude = $('in-claude');
-const inOpenai = $('in-openai');
-const inSess   = $('in-sess');
-const btnAdd   = $('btn-add');
-const btnStart = $('btn-start');
-const btnKenn  = $('btn-kenn');
-const hintEl   = $('hint-ready');
-const slistEl  = $('slist');
+// ══════════════════════════════════════════════════════
+// APP STATE
+// ══════════════════════════════════════════════════════
+let curSess  = null;
+let curMode  = D.mode;
+let micStrm  = null;
+let mRec     = null;
+let chunks   = [];
+let isRec    = false;
+let isProc   = false;
+let isSpk    = false;
+let isMaster = false;
+let masterIdx = 0;
 
-// Herstel opgeslagen sleutels
-if (D.ck) inClaude.value = D.ck;
-if (D.ok) inOpenai.value = D.ok;
+// Rijd modus state
+let dOn    = false;
+let dRecOn = false;
+let dSR    = null;
+let dConf  = false;
+let dPend  = '';
 
-// ── SESSIE VARIABELE ───────────────────────────────────────────
-let curSess = null;
-// Herstel laatste sessie
-if (D.sessions.length > 0) curSess = D.sessions[D.sessions.length - 1];
+// Herstel sleutels
+el('in-ck').value = D.ck;
+el('in-ok').value = D.ok;
 
-// ── MODUS ──────────────────────────────────────────────────────
-let curMode = D.mode || 'hand';
+// ══════════════════════════════════════════════════════
+// MASTERPROMPT VRAGEN
+// ══════════════════════════════════════════════════════
+const MV = [
+  { id:1, thema:'Bureau G', v:'Laten we beginnen met Bureau G. Wat doet Bureau G precies? Je noemt e-mails, offertes, websites en huisstijlen. Ben je een communicatie- of designbureau? Werk je alleen of met een team? En wat voor klanten bedien je typisch?' },
+  { id:2, thema:'Privé versus zakelijk', v:'Hoe diep wil je gaan op persoonlijk vlak? Een masterprompt voor zakelijke taken kan met minder persoonlijke informatie toe dan één die ook privézaken aanraakt. Denk aan je gezin, gezondheid, persoonlijke waarden. Waar ligt voor jou de grens?' },
+  { id:3, thema:'Autonomie en controle', v:'Wat bedoel je precies als je zegt dat ik moet handelen zoals jij? Mag ik op termijn autonoom e-mails versturen namens jou, of wil je altijd eerst zelf goedkeuren? Dit bepaalt het hele ontwerp van de masterprompt.' },
+  { id:4, thema:'Beschikbaar materiaal', v:'Heb je al materiaal beschikbaar dat ik kan analyseren? Denk aan oude e-mails, offertes die je hebt verstuurd, ontwerpen die je hebt gemaakt. Hoe meer voorbeelden ik heb van hoe jij communiceert en werkt, hoe beter ik jouw stijl kan leren.' },
+  { id:5, thema:'Valkuilen en risicos', v:'Wat is volgens jou de grootste valkuil? Waar gaat een AI die jou nadoet het eerst de mist in? In toon, in inhoud, in oordeel, in timing? Jouw intuïtie hierover is heel waardevol voor mij.' },
+  { id:6, thema:'Werkwijze en planning', v:'De laatste vraag is praktisch. Hoe wil je dit traject aanpakken? Eén lang gesprek nu, of liever in delen verspreid over de komende weken? Ik raad het laatste aan, maar het is jouw keuze.' }
+];
 
-function pickMode(m) {
-  curMode = m; D.mode = m; save();
-  $('mc-hand').className  = 'mc' + (m === 'hand'  ? ' sel-h' : '');
-  $('mc-drive').className = 'mc' + (m === 'drive' ? ' sel-d' : '');
+// ══════════════════════════════════════════════════════
+// SETUP — MODUS
+// ══════════════════════════════════════════════════════
+function setMode(m) {
+  curMode = m; D.mode = m; sv();
+  el('mc-h').className = 'mc' + (m === 'hand' ? ' h' : '');
+  el('mc-d').className = 'mc' + (m === 'drive' ? ' d' : '');
   chk();
 }
-pickMode(curMode);
+setMode(curMode);
 
-// ── CHECK READY ────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
+// SETUP — SLEUTELS & VALIDATIE
+// ══════════════════════════════════════════════════════
 function chk() {
-  const ck = inClaude.value.trim();
-  const ok = inOpenai.value.trim();
-  const rdy = !!(ck && ok && curSess);
-  btnStart.disabled = !rdy;
-  if (!ck)      { hintEl.textContent = '⚠️ Voer je Anthropic (Claude) sleutel in'; hintEl.className='hint'; }
-  else if (!ok) { hintEl.textContent = '⚠️ Voer je OpenAI (Whisper) sleutel in';   hintEl.className='hint'; }
-  else if (!curSess) { hintEl.textContent = '⚠️ Typ een naam en druk op + om een sessie aan te maken'; hintEl.className='hint'; }
-  else          { hintEl.textContent = '✅ Klaar om te starten!'; hintEl.className='hint ok'; }
+  const ck = el('in-ck').value.trim();
+  const ok = el('in-ok').value.trim();
+  const ok2 = !!(ck && ok && curSess);
+  el('btn-start').disabled = !ok2;
+  const h = el('hint');
+  if (!ck)       { h.textContent = '⚠️ Voer je Anthropic sleutel in'; h.className = 'hint'; }
+  else if (!ok)  { h.textContent = '⚠️ Voer je OpenAI sleutel in'; h.className = 'hint'; }
+  else if (!curSess) { h.textContent = '⚠️ Maak een sessie aan met +'; h.className = 'hint'; }
+  else           { h.textContent = '✅ Klaar!'; h.className = 'hint ok'; }
 }
 
-inClaude.addEventListener('input', () => { D.ck = inClaude.value.trim(); save(); chk(); });
-inOpenai.addEventListener('input', () => { D.ok = inOpenai.value.trim(); save(); chk(); });
-inClaude.addEventListener('blur',  () => { D.ck = inClaude.value.trim(); save(); chk(); });
-inOpenai.addEventListener('blur',  () => { D.ok = inOpenai.value.trim(); save(); chk(); });
+el('in-ck').addEventListener('input', () => { D.ck = el('in-ck').value.trim(); sv(); chk(); });
+el('in-ok').addEventListener('input', () => { D.ok = el('in-ok').value.trim(); sv(); chk(); });
+el('in-ck').addEventListener('blur',  () => { D.ck = el('in-ck').value.trim(); sv(); chk(); });
+el('in-ok').addEventListener('blur',  () => { D.ok = el('in-ok').value.trim(); sv(); chk(); });
 
-// ── SESSIES ────────────────────────────────────────────────────
-function renderSessions() {
+// ══════════════════════════════════════════════════════
+// SETUP — SESSIES
+// ══════════════════════════════════════════════════════
+function renderSess() {
+  const sl = el('slist');
   if (!D.sessions.length) {
-    slistEl.innerHTML = '<div style="font-size:12px;color:var(--t3);padding:6px 0;">Nog geen sessies — maak er een aan hieronder.</div>';
+    sl.innerHTML = '<div style="font-size:12px;color:var(--t3);padding:6px 0;">Nog geen sessies — maak er een aan.</div>';
     return;
   }
-  slistEl.innerHTML = '';
+  sl.innerHTML = '';
   [...D.sessions].reverse().forEach(s => {
     const n = (s.messages || []).filter(m => m.role === 'user').length;
     const d = document.createElement('div');
-    d.className = 'si' + (curSess && curSess.id === s.id ? ' sel' : '');
-    d.innerHTML = `<div><div class="si-n">${esc(s.name)}</div><div class="si-m">${n} berichten · ${new Date(s.id).toLocaleDateString('nl-NL')}</div></div><button class="si-del" data-id="${s.id}">✕</button>`;
+    d.className = 'si' + (curSess && curSess.id === s.id ? ' on' : '');
+    d.innerHTML = `<div><div class="si-n">${esc(s.name)}</div><div class="si-m">${n} berichten · ${new Date(s.id).toLocaleDateString('nl-NL')}</div></div><button class="si-x" data-id="${s.id}">✕</button>`;
     d.addEventListener('click', e => {
       if (e.target.dataset.id) {
-        D.sessions = D.sessions.filter(x => x.id != e.target.dataset.id);
-        if (curSess && curSess.id == e.target.dataset.id) curSess = D.sessions.length ? D.sessions[D.sessions.length-1] : null;
-        save(); renderSessions(); chk();
+        D.sessions = D.sessions.filter(x => String(x.id) !== e.target.dataset.id);
+        if (curSess && String(curSess.id) === e.target.dataset.id) {
+          curSess = D.sessions.length ? D.sessions[D.sessions.length - 1] : null;
+        }
+        sv(); renderSess(); chk();
       } else {
-        curSess = s; renderSessions(); chk();
+        curSess = s; renderSess(); chk();
       }
     });
-    slistEl.appendChild(d);
+    sl.appendChild(d);
   });
 }
 
-function makeSession(name, isKenn) {
-  const s = { id: Date.now(), name: name, messages: [], isKennismaking: !!isKenn };
+function newSess(name, flags) {
+  const s = Object.assign({ id: Date.now(), name, messages: [] }, flags || {});
   D.sessions.push(s);
   curSess = s;
-  save();
-  renderSessions();
-  chk();
+  sv(); renderSess(); chk();
   return s;
 }
 
-btnAdd.addEventListener('click', () => {
-  const name = inSess.value.trim();
-  if (!name) { inSess.focus(); inSess.placeholder = 'Typ eerst een naam!'; return; }
-  makeSession(name, false);
-  inSess.value = '';
-  inSess.placeholder = 'Geef je sessie een naam...';
+el('btn-add').addEventListener('click', () => {
+  const v = el('in-sess').value.trim();
+  if (!v) { el('in-sess').focus(); return; }
+  newSess(v);
+  el('in-sess').value = '';
 });
-inSess.addEventListener('keydown', e => { if (e.key === 'Enter') btnAdd.click(); });
+el('in-sess').addEventListener('keydown', e => { if (e.key === 'Enter') el('btn-add').click(); });
 
-btnStart.addEventListener('click', () => {
-  D.ck = inClaude.value.trim();
-  D.ok = inOpenai.value.trim();
-  save();
-  if (!D.ck || !D.ok || !curSess) { chk(); return; }
-  openChat(false);
+el('btn-start').addEventListener('click', () => {
+  D.ck = el('in-ck').value.trim();
+  D.ok = el('in-ok').value.trim();
+  sv();
+  openChat();
 });
 
-btnKenn.addEventListener('click', () => {
-  D.ck = inClaude.value.trim();
-  D.ok = inOpenai.value.trim();
-  if (!D.ck || !D.ok) { alert('Vul eerst beide API-sleutels in.'); return; }
-  save();
-  makeSession('🤝 Kennismaking', true);
+el('btn-kenn').addEventListener('click', () => {
+  D.ck = el('in-ck').value.trim();
+  D.ok = el('in-ok').value.trim();
+  if (!D.ck || !D.ok) { toast('⚠️ Vul eerst beide sleutels in'); return; }
+  sv();
+  let s = D.sessions.find(x => x.isKenn);
+  if (!s) s = newSess('🤝 Kennismaking', { isKenn: true });
+  else { curSess = s; }
   openChat(true);
 });
 
-// ── PROFIEL ────────────────────────────────────────────────────
+el('btn-master').addEventListener('click', () => {
+  D.ck = el('in-ck').value.trim();
+  D.ok = el('in-ok').value.trim();
+  if (!D.ck || !D.ok) { toast('⚠️ Vul eerst beide sleutels in'); return; }
+  sv();
+  let s = D.sessions.find(x => x.isMaster);
+  if (!s) s = newSess('🧠 Masterprompt Interview', { isMaster: true });
+  else { curSess = s; }
+  isMaster = true;
+  masterIdx = 0;
+  // Sla al beantwoorde vragen over
+  while (masterIdx < MV.length && D.masterQ[MV[masterIdx].id]) masterIdx++;
+  openChat(false, true);
+});
+
+// ══════════════════════════════════════════════════════
+// PROFIEL
+// ══════════════════════════════════════════════════════
 function renderProfiel() {
   const entries = Object.entries(D.profiel);
-  if (!entries.length) { $('profiel-wrap').style.display = 'none'; return; }
-  $('profiel-wrap').style.display = 'flex';
-  $('profiel-box').innerHTML = entries.map(([k,v]) => `<b>${esc(k)}:</b> ${esc(v)}`).join('<br>');
+  if (!entries.length) { el('profiel-wrap').style.display = 'none'; return; }
+  el('profiel-wrap').style.display = 'flex';
+  el('profiel-box').innerHTML = entries.map(([k,v]) => `<b>${esc(k)}:</b> ${esc(v)}`).join('<br>');
 }
 
-// ── NAVIGATIE ──────────────────────────────────────────────────
-function showPage(id) {
+// ══════════════════════════════════════════════════════
+// NAVIGATIE
+// ══════════════════════════════════════════════════════
+function showPg(id) {
   document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
-  $(id).classList.add('on');
+  el(id).classList.add('on');
 }
 
 function goBack() {
   stopAll();
-  showPage('pg-setup');
-  renderSessions();
+  isMaster = false;
+  showPg('pg-setup');
+  renderSess();
   renderProfiel();
   chk();
 }
 
 function clearChat() {
-  if (curSess) { curSess.messages = []; save(); renderMsgs(); }
+  if (!curSess) return;
+  curSess.messages = [];
+  sv();
+  renderMsgs();
 }
 
-// ── BERICHTEN ──────────────────────────────────────────────────
-const msgsEl = $('msgs');
-
-function renderMsgs() {
-  msgsEl.innerHTML = '';
-  if (!curSess || !curSess.messages.length) {
-    msgsEl.innerHTML = curMode === 'drive'
-      ? '<div class="empty"><div class="empty-ico">🚗</div><div class="empty-t">Zeg "Start bericht"<br>om te beginnen</div></div>'
-      : '<div class="empty"><div class="empty-ico">🎙️</div><div class="empty-t">Houd de knop ingedrukt<br>en spreek. Laat los als je klaar bent.</div></div>';
-    return;
-  }
-  curSess.messages.forEach(m => addMsg(m.role, m.content, false));
-}
-
-function addMsg(role, text, anim) {
-  msgsEl.querySelectorAll('.empty').forEach(e => e.remove());
-  const d = document.createElement('div');
-  d.className = 'msg ' + role;
-  if (anim === false) d.style.animation = 'none';
-  d.textContent = text;
-  msgsEl.appendChild(d);
-  msgsEl.scrollTop = msgsEl.scrollHeight;
-}
-
-function addCmd(text) {
-  msgsEl.querySelectorAll('.empty').forEach(e => e.remove());
-  const d = document.createElement('div');
-  d.className = 'msg cmd';
-  d.textContent = '🗣 ' + text;
-  msgsEl.appendChild(d);
-  msgsEl.scrollTop = msgsEl.scrollHeight;
-}
-
-// ── CHAT OPENEN ────────────────────────────────────────────────
-let micStream = null;
-
-async function openChat(isKenn) {
-  $('hdr-sess').textContent = curSess ? curSess.name : '—';
-  showPage('pg-chat');
+// ══════════════════════════════════════════════════════
+// CHAT OPENEN
+// ══════════════════════════════════════════════════════
+async function openChat(autoStart, masterStart) {
+  el('hdr-sess').textContent = curSess ? curSess.name : '—';
+  showPg('pg-chat');
   renderMsgs();
 
   if (curMode === 'hand') {
-    $('hpanel').style.display = 'flex';
-    $('dpanel').style.display = 'none';
-    setH('off'); $('hstat').textContent = 'Microfoon starten...';
+    el('hp').style.display = 'flex';
+    el('dp').style.display = 'none';
+    setRb('off');
+    el('hs').textContent = 'Microfoon starten...';
+    el('hh').textContent = '';
     try {
-      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      setH('ready');
-      $('hstat').textContent = 'Houd ingedrukt om te spreken';
-      $('hhint').textContent = 'Laat los als je klaar bent — Whisper herkent je stem';
-      if (isKenn) setTimeout(() => claudeCall('[START]'), 500);
-    } catch(e) {
-      $('hstat').textContent = 'Microfoon geweigerd: ' + e.message;
+      micStrm = await navigator.mediaDevices.getUserMedia({ audio: true });
+      setRb('ready');
+      el('hs').textContent = 'Houd ingedrukt om te spreken';
+      el('hh').textContent = 'Laat los als je klaar bent — Whisper herkent je stem';
+      if (autoStart || masterStart) setTimeout(() => { if (masterStart) masterNext(); else claudeCall('[START]'); }, 600);
+    } catch(err) {
+      setRb('off');
+      el('hs').textContent = 'Microfoon geweigerd: ' + err.message;
     }
   } else {
-    $('hpanel').style.display = 'none';
-    $('dpanel').style.display = 'flex';
-    setD('idle', '🚗', 'WACHT');
-    $('dstat').textContent = 'Zeg "Start bericht" om te beginnen';
-    $('dsub').textContent  = 'Of "Wissel sessie" / "Nieuwe sessie [naam]"';
-    if (isKenn) {
-      try { micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch(e) {}
-      setTimeout(() => claudeCall('[START]'), 500);
+    el('hp').style.display = 'none';
+    el('dp').style.display = 'flex';
+    setDr('idle', '🚗', 'WACHT');
+    el('ds').textContent = 'Zeg "Start bericht" om te beginnen';
+    el('dd').textContent = 'Of "Wissel sessie" / "Nieuwe sessie [naam]"';
+    if (autoStart) {
+      try { micStrm = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch(e) {}
+      setTimeout(() => claudeCall('[START]'), 600);
+    } else if (masterStart) {
+      try { micStrm = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch(e) {}
+      setTimeout(() => masterNext(), 600);
     } else {
-      driveStart();
+      drListen();
     }
   }
 }
 
-// ── HANDMODUS ──────────────────────────────────────────────────
-let mr = null, chunks = [], isRec = false, isProc = false, isSpk = false;
-const rbtn = $('rbtn');
-
-function setH(s) {
-  rbtn.className = 'rbtn ' + s;
-  rbtn.textContent = {ready:'🎙️',rec:'⏹️',proc:'⏳',spk:'🔊',off:'🎙️'}[s] || '🎙️';
+// ══════════════════════════════════════════════════════
+// BERICHTEN
+// ══════════════════════════════════════════════════════
+function renderMsgs() {
+  const m = el('msgs');
+  m.innerHTML = '';
+  if (!curSess || !curSess.messages.length) {
+    m.innerHTML = curMode === 'drive'
+      ? '<div class="empty"><div class="ei">🚗</div><div class="et">Zeg "Start bericht" om te beginnen</div></div>'
+      : '<div class="empty"><div class="ei">🎙️</div><div class="et">Houd de knop ingedrukt en spreek.<br>Laat los als je klaar bent.</div></div>';
+    return;
+  }
+  curSess.messages.forEach(msg => addMsg(msg.role, msg.content, false));
 }
 
-rbtn.addEventListener('pointerdown', e => { e.preventDefault(); if (!isRec && !isProc && !isSpk) recStart(); });
-rbtn.addEventListener('pointerup',   e => { e.preventDefault(); if (isRec) recStop(); });
-rbtn.addEventListener('pointerleave',e => { if (isRec) recStop(); });
-rbtn.addEventListener('touchstart',  e => e.preventDefault(), { passive: false });
-rbtn.addEventListener('touchend',    e => { e.preventDefault(); if (isRec) recStop(); }, { passive: false });
+function addMsg(role, text, anim) {
+  const m = el('msgs');
+  m.querySelectorAll('.empty').forEach(e => e.remove());
+  const d = document.createElement('div');
+  const cls = { user:'u', assistant:'a', sys:'s', cmd:'c' };
+  d.className = 'msg ' + (cls[role] || 's');
+  if (anim === false) d.style.animation = 'none';
+  d.textContent = text;
+  m.appendChild(d);
+  m.scrollTop = m.scrollHeight;
+}
+
+// ══════════════════════════════════════════════════════
+// HANDMODUS
+// ══════════════════════════════════════════════════════
+function setRb(s) {
+  const b = el('rb');
+  b.className = 'rb ' + s;
+  b.textContent = { ready:'🎙️', rec:'⏹️', proc:'⏳', spk:'🔊', off:'🎙️' }[s] || '🎙️';
+}
+
+el('rb').addEventListener('pointerdown', e => { e.preventDefault(); if (!isRec && !isProc && !isSpk) recStart(); });
+el('rb').addEventListener('pointerup',   e => { e.preventDefault(); if (isRec) recStop(); });
+el('rb').addEventListener('pointerleave',e => { if (isRec) recStop(); });
+el('rb').addEventListener('touchstart',  e => e.preventDefault(), { passive: false });
+el('rb').addEventListener('touchend',    e => { e.preventDefault(); if (isRec) recStop(); }, { passive: false });
 
 function recStart() {
-  if (!micStream) return;
+  if (!micStrm) return;
   chunks = [];
-  const mime = ['audio/webm;codecs=opus','audio/webm','audio/ogg'].find(t => MediaRecorder.isTypeSupported(t));
-  mr = new MediaRecorder(micStream, { mimeType: mime });
-  mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-  mr.onstop = () => recDone();
-  mr.start(100); isRec = true;
-  setH('rec'); $('hstat').textContent = 'Opname...'; $('tbox').classList.remove('on');
+  const mime = ['audio/webm;codecs=opus','audio/webm','audio/ogg'].find(t => MediaRecorder.isTypeSupported(t)) || '';
+  try {
+    mRec = new MediaRecorder(micStrm, mime ? { mimeType: mime } : {});
+  } catch(e) {
+    mRec = new MediaRecorder(micStrm);
+  }
+  mRec.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+  mRec.onstop = () => recDone();
+  mRec.start(100);
+  isRec = true;
+  setRb('rec');
+  el('hs').textContent = 'Opname bezig...';
+  el('tb').classList.remove('on');
 }
 
 function recStop() {
-  if (!mr || mr.state === 'inactive') return;
-  isRec = false; mr.stop();
-  setH('proc'); $('hstat').textContent = 'Whisper verwerkt...';
+  if (!mRec || mRec.state === 'inactive') return;
+  isRec = false;
+  mRec.stop();
+  setRb('proc');
+  el('hs').textContent = 'Whisper verwerkt je spraak...';
 }
 
 async function recDone() {
-  const mime = chunks[0]?.type || 'audio/webm';
+  const mime = (chunks[0] && chunks[0].type) || 'audio/webm';
   const blob = new Blob(chunks, { type: mime });
-  if (blob.size < 2000) { setH('ready'); $('hstat').textContent = 'Te kort — houd langer ingedrukt'; return; }
+  if (blob.size < 1500) {
+    setRb('ready');
+    el('hs').textContent = 'Te kort — houd langer ingedrukt';
+    return;
+  }
   try {
-    const t = await whisper(blob, mime);
-    if (!t || t.trim().length < 2) { setH('ready'); $('hstat').textContent = 'Niets gehoord — probeer opnieuw'; return; }
-    $('tbox').textContent = '📝 "' + t + '"'; $('tbox').classList.add('on');
-    await claudeCall(t.trim());
-  } catch(e) {
-    setH('ready'); $('hstat').textContent = 'Fout: ' + e.message;
+    const txt = await callWhisper(blob, mime);
+    if (!txt || txt.trim().length < 2) {
+      setRb('ready');
+      el('hs').textContent = 'Niets gehoord — probeer opnieuw';
+      return;
+    }
+    el('tb').textContent = '📝 "' + txt.trim() + '"';
+    el('tb').classList.add('on');
+    if (isMaster) await masterAnswer(txt.trim());
+    else await claudeCall(txt.trim());
+  } catch(err) {
+    setRb('ready');
+    el('hs').textContent = 'Fout: ' + err.message;
   }
 }
 
-// ── RIJMODUS ───────────────────────────────────────────────────
-let dRec = null, dOn = false, dRecOn = false, dConf = false, dPend = '';
+// ══════════════════════════════════════════════════════
+// RIJMODUS
+// ══════════════════════════════════════════════════════
+const CS  = ['start bericht','start het bericht','begin bericht'];
+const CST = ['stop bericht','stop het bericht','einde bericht'];
+const CSW = ['wissel sessie','andere sessie','verander sessie'];
+const CNS = ['nieuwe sessie'];
+const CY  = ['ja','correct','klopt','goed','verwerk','bevestig','doe maar'];
+const CN  = ['nee','opnieuw','niet goed'];
+const CQ  = ['stop assistent','terug naar menu','afsluiten'];
 
-const CMD_START  = ['start bericht','start het bericht','begin bericht'];
-const CMD_STOP   = ['stop bericht','stop het bericht','einde bericht'];
-const CMD_SWITCH = ['wissel sessie','andere sessie','verander sessie'];
-const CMD_NEW    = ['nieuwe sessie'];
-const CMD_YES    = ['ja','correct','klopt','goed','verwerk','bevestig','doe maar'];
-const CMD_NO     = ['nee','opnieuw','niet goed','fout'];
-const CMD_QUIT   = ['stop assistent','terug naar menu','afsluiten'];
-
-function setD(ring, ico, lbl) {
-  $('dring').className = 'dring ' + ring;
-  $('dico').textContent = ico;
-  $('dlbl').textContent = lbl;
-  ['cp1','cp2','cp3','cp4'].forEach(id => $('cp'+id.slice(2)).classList.remove('on'));
-  if (ring==='listen') $('cp1').classList.add('on');
-  if (ring==='rec')    $('cp2').classList.add('on');
-  if (ring==='conf')   { $('cp1').classList.add('on'); }
+function setDr(ring, ico, lbl) {
+  el('dr').className = 'dr ' + ring;
+  el('di').textContent = ico;
+  el('dl').textContent = lbl;
+  ['p1','p2','p3','p4'].forEach(id => el(id).classList.remove('on'));
+  if (ring === 'listen') el('p1').classList.add('on');
+  if (ring === 'rec')    el('p2').classList.add('on');
+  if (ring === 'conf')   el('p1').classList.add('on');
 }
 
-function driveStart() {
+function drListen() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { $('dstat').textContent = 'Gebruik Chrome voor rijmodus.'; return; }
+  if (!SR) { el('ds').textContent = 'Gebruik Chrome voor rijmodus.'; return; }
   dOn = true;
-  dRec = new SR(); dRec.lang = 'nl-NL'; dRec.continuous = true; dRec.interimResults = false;
-  dRec.onstart = () => { setD('listen','👂','LUISTERT'); $('dstat').textContent = 'Zeg "Start bericht"'; $('dsub').textContent = 'Of "Wissel sessie" / "Nieuwe sessie [naam]"'; };
-  dRec.onresult = e => {
-    const idx = e.results.length - 1;
-    if (!e.results[idx].isFinal) return;
-    const raw = e.results[idx][0].transcript.trim();
-    driveCmd(raw.toLowerCase(), raw);
+  dSR = new SR();
+  dSR.lang = 'nl-NL'; dSR.continuous = true; dSR.interimResults = false;
+  dSR.onstart = () => {
+    setDr('listen', '👂', 'LUISTERT');
+    el('ds').textContent = 'Zeg "Start bericht" om te beginnen';
+    el('dd').textContent = 'Of "Wissel sessie" / "Nieuwe sessie [naam]"';
   };
-  dRec.onerror = e => { if (e.error !== 'not-allowed' && dOn) setTimeout(driveStart, 800); };
-  dRec.onend   = () => { if (dOn && !dRecOn && !isProc && !isSpk) setTimeout(driveStart, 400); };
-  try { dRec.start(); } catch(e) {}
+  dSR.onresult = e => {
+    const i = e.results.length - 1;
+    if (!e.results[i].isFinal) return;
+    const raw = e.results[i][0].transcript.trim();
+    handleDrCmd(raw.toLowerCase(), raw);
+  };
+  dSR.onerror = e => { if (e.error !== 'not-allowed' && dOn) setTimeout(drListen, 800); };
+  dSR.onend   = () => { if (dOn && !dRecOn && !isProc && !isSpk) setTimeout(drListen, 400); };
+  try { dSR.start(); } catch(e) {}
 }
 
-function driveStop() { dOn = false; if (dRec) { try { dRec.abort(); } catch(e) {} dRec = null; } }
+function drStop() {
+  dOn = false;
+  if (dSR) { try { dSR.abort(); } catch(e) {} dSR = null; }
+}
 
-async function driveCmd(t, raw) {
+async function handleDrCmd(t, raw) {
   if (dConf) {
-    if (CMD_YES.some(w => t.includes(w))) { dConf = false; addCmd('✅ Bevestigd'); claudeCall(dPend); }
-    else if (CMD_NO.some(w => t.includes(w))) { dConf = false; dPend = ''; say('Oké, probeer opnieuw. Zeg start bericht.', driveStart); }
+    if (CY.some(w => t.includes(w))) {
+      dConf = false;
+      addMsg('cmd', '✅ Bevestigd');
+      if (isMaster) await masterAnswer(dPend);
+      else await claudeCall(dPend);
+    } else if (CN.some(w => t.includes(w))) {
+      dConf = false; dPend = '';
+      say('Oké, probeer opnieuw. Zeg start bericht.', drListen);
+    }
     return;
   }
-  if (CMD_QUIT.some(w => t.includes(w))) { goBack(); return; }
-  if (CMD_SWITCH.some(w => t.includes(w))) {
-    addCmd('Sessie wisselen');
-    const list = D.sessions.length ? D.sessions.map((s,i)=>`${i+1}: ${s.name}`).join(', ') : 'Geen sessies.';
-    setD('conf','📂','SESSIE');
-    $('dstat').textContent = 'Welke sessie?';
-    $('dsub').textContent  = 'Zeg het nummer of de naam';
-    say('Je hebt ' + D.sessions.length + ' sessies: ' + list + '. Welke wil je?', listenSessChoice);
+  if (CQ.some(w => t.includes(w))) { goBack(); return; }
+  if (CSW.some(w => t.includes(w))) {
+    addMsg('cmd', 'Sessie wisselen');
+    const list = D.sessions.length ? D.sessions.map((s,i) => `${i+1}: ${s.name}`).join(', ') : 'geen sessies';
+    setDr('conf', '📂', 'SESSIE');
+    el('ds').textContent = 'Welke sessie?';
+    say('Je hebt ' + D.sessions.length + ' sessies: ' + list + '. Welke wil je?', drListenSess);
     return;
   }
-  const nw = CMD_NEW.find(w => t.includes(w));
+  const nw = CNS.find(w => t.includes(w));
   if (nw) {
-    let name = raw.replace(new RegExp(nw, 'gi'), '').trim() || ('Idee ' + (D.sessions.length+1));
-    makeSession(name, false);
-    addCmd('Nieuwe sessie: ' + name);
-    say('Sessie ' + name + ' aangemaakt. Zeg start bericht om te beginnen.', driveStart);
+    const name = raw.replace(new RegExp(nw, 'gi'), '').trim() || ('Idee ' + (D.sessions.length + 1));
+    newSess(name);
+    addMsg('cmd', 'Nieuwe sessie: ' + name);
+    say('Sessie ' + name + ' aangemaakt. Zeg start bericht.', drListen);
     return;
   }
-  if (!dRecOn && CMD_START.some(w => t.includes(w))) {
-    if (!curSess) { say('Maak eerst een sessie aan.', driveStart); return; }
-    addCmd('Start bericht');
-    driveStop();
-    await driveRecord();
+  if (!dRecOn && CS.some(w => t.includes(w))) {
+    if (!curSess) { say('Maak eerst een sessie aan.', drListen); return; }
+    addMsg('cmd', 'Start bericht');
+    drStop();
+    await drRecord();
   }
 }
 
-async function driveRecord() {
+async function drRecord() {
   dRecOn = true;
-  try {
-    if (!micStream) micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  } catch(e) { say('Microfoon geweigerd.', driveStart); dRecOn=false; return; }
+  if (!micStrm) {
+    try { micStrm = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+    catch(e) { say('Microfoon geweigerd.', drListen); dRecOn = false; return; }
+  }
   chunks = [];
-  const mime = ['audio/webm;codecs=opus','audio/webm','audio/ogg'].find(t => MediaRecorder.isTypeSupported(t));
-  mr = new MediaRecorder(micStream, { mimeType: mime });
-  mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-  mr.onstop = () => driveRecDone();
-  mr.start(100);
-  setD('rec','🔴','OPNAME'); $('dstat').textContent = 'Opname bezig...'; $('dsub').textContent = 'Zeg "Stop bericht" als je klaar bent';
-  say('Ga je gang.', listenStop);
+  const mime = ['audio/webm;codecs=opus','audio/webm','audio/ogg'].find(t => MediaRecorder.isTypeSupported(t)) || '';
+  try {
+    mRec = new MediaRecorder(micStrm, mime ? { mimeType: mime } : {});
+  } catch(e) { mRec = new MediaRecorder(micStrm); }
+  mRec.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+  mRec.onstop = () => drRecDone();
+  mRec.start(100);
+  setDr('rec', '🔴', 'OPNAME');
+  el('ds').textContent = 'Opname bezig...';
+  el('dd').textContent = 'Zeg "Stop bericht" als je klaar bent';
+  say('Ga je gang.', drListenStop);
 }
 
-function listenStop() {
+function drListenStop() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { setTimeout(driveRecStop, 30000); return; }
-  const r = new SR(); r.lang='nl-NL'; r.continuous=true; r.interimResults=false;
+  if (!SR) { setTimeout(drRecStop, 30000); return; }
+  const r = new SR();
+  r.lang = 'nl-NL'; r.continuous = true; r.interimResults = false;
   r.onresult = e => {
-    const idx=e.results.length-1; if(!e.results[idx].isFinal) return;
-    const t=e.results[idx][0].transcript.toLowerCase();
-    if (CMD_STOP.some(w => t.includes(w))) { try{r.abort();}catch(e){} addCmd('Stop bericht'); driveRecStop(); }
+    const i = e.results.length - 1;
+    if (!e.results[i].isFinal) return;
+    const t = e.results[i][0].transcript.toLowerCase();
+    if (CST.some(w => t.includes(w))) { try { r.abort(); } catch(e) {} addMsg('cmd', 'Stop bericht'); drRecStop(); }
   };
   r.onerror = () => {};
-  r.onend = () => { if (dRecOn) { try{r.start();}catch(e){} } };
+  r.onend   = () => { if (dRecOn) { try { r.start(); } catch(e) {} } };
   try { r.start(); } catch(e) {}
 }
 
-function driveRecStop() {
-  if (!mr || mr.state === 'inactive') return;
-  dRecOn = false; mr.stop();
-  setD('proc','⏳','VERWERKT'); $('dstat').textContent = 'Whisper verwerkt...'; $('dsub').textContent = '';
+function drRecStop() {
+  if (!mRec || mRec.state === 'inactive') return;
+  dRecOn = false; mRec.stop();
+  setDr('proc', '⏳', 'VERWERKT');
+  el('ds').textContent = 'Whisper verwerkt...';
+  el('dd').textContent = '';
 }
 
-async function driveRecDone() {
-  const mime = chunks[0]?.type || 'audio/webm';
+async function drRecDone() {
+  const mime = (chunks[0] && chunks[0].type) || 'audio/webm';
   const blob = new Blob(chunks, { type: mime });
-  if (blob.size < 2000) { say('Niets gehoord. Zeg start bericht.', driveStart); return; }
+  if (blob.size < 1500) { say('Niets gehoord. Zeg start bericht.', drListen); return; }
   try {
-    const t = await whisper(blob, mime);
-    if (!t || t.trim().length < 2) { say('Kon je niet verstaan. Probeer opnieuw.', driveStart); return; }
-    dPend = t.trim(); dConf = true;
-    setD('conf','❓','BEVESTIG'); $('dstat').textContent = 'Klopt dit?'; $('dsub').textContent = 'Zeg "ja" of "opnieuw"';
-    say('Ik heb gehoord: ' + t + '. Klopt dit? Zeg ja of opnieuw.', listenConf);
-  } catch(e) { say('Fout bij verwerken. Zeg start bericht.', driveStart); }
+    const txt = await callWhisper(blob, mime);
+    if (!txt || txt.trim().length < 2) { say('Kon je niet verstaan. Probeer opnieuw.', drListen); return; }
+    dPend = txt.trim(); dConf = true;
+    setDr('conf', '❓', 'BEVESTIG');
+    el('ds').textContent = 'Klopt dit?';
+    el('dd').textContent = 'Zeg "ja" of "opnieuw"';
+    say('Ik heb gehoord: ' + txt + '. Klopt dit? Zeg ja of opnieuw.', drListenConf);
+  } catch(e) { say('Fout bij verwerken. Zeg start bericht.', drListen); }
 }
 
-function listenConf() {
+function drListenConf() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return;
-  const r = new SR(); r.lang='nl-NL'; r.continuous=false; r.interimResults=false;
+  const r = new SR();
+  r.lang = 'nl-NL'; r.continuous = false; r.interimResults = false;
   r.onresult = e => {
-    const t=e.results[0][0].transcript.toLowerCase().trim();
-    if (CMD_YES.some(w=>t.includes(w))) { dConf=false; addCmd('✅ '+t); claudeCall(dPend); }
-    else { dConf=false; dPend=''; say('Oké, probeer opnieuw.', driveStart); }
+    const t = e.results[0][0].transcript.toLowerCase().trim();
+    if (CY.some(w => t.includes(w))) { dConf = false; addMsg('cmd', '✅'); if (isMaster) masterAnswer(dPend); else claudeCall(dPend); }
+    else { dConf = false; dPend = ''; say('Oké, probeer opnieuw.', drListen); }
   };
-  r.onerror = () => { if(dConf) setTimeout(listenConf,500); };
+  r.onerror = () => { if (dConf) setTimeout(drListenConf, 500); };
   r.onend = () => {};
   try { r.start(); } catch(e) {}
 }
 
-function listenSessChoice() {
+function drListenSess() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { driveStart(); return; }
-  const r = new SR(); r.lang='nl-NL'; r.continuous=false; r.interimResults=false;
+  if (!SR) { drListen(); return; }
+  const r = new SR();
+  r.lang = 'nl-NL'; r.continuous = false; r.interimResults = false;
   r.onresult = e => {
-    const raw=e.results[0][0].transcript.trim(), t=raw.toLowerCase();
+    const raw = e.results[0][0].transcript.trim();
+    const t   = raw.toLowerCase();
     const num = parseInt(t);
-    if (!isNaN(num) && num>=1 && num<=D.sessions.length) {
-      curSess = [...D.sessions].reverse()[num-1];
+    if (!isNaN(num) && num >= 1 && num <= D.sessions.length) {
+      curSess = [...D.sessions].reverse()[num - 1];
     } else {
-      curSess = D.sessions.find(s => s.name.toLowerCase().includes(t.split(' ')[0])) || curSess;
+      const found = D.sessions.find(s => s.name.toLowerCase().includes(t.split(' ')[0]));
+      if (found) curSess = found;
     }
     if (curSess) {
-      $('hdr-sess').textContent = curSess.name;
+      el('hdr-sess').textContent = curSess.name;
       renderMsgs();
-      say('Sessie ' + curSess.name + ' geselecteerd.', driveStart);
-      addCmd('Sessie: ' + curSess.name);
+      say('Sessie ' + curSess.name + ' geselecteerd.', drListen);
+      addMsg('cmd', 'Sessie: ' + curSess.name);
     } else {
-      say('Sessie niet gevonden.', driveStart);
+      say('Sessie niet gevonden.', drListen);
     }
   };
-  r.onerror = () => driveStart();
-  r.onend = () => {};
+  r.onerror = () => drListen();
+  r.onend   = () => {};
   try { r.start(); } catch(e) {}
 }
 
-// ── WHISPER ────────────────────────────────────────────────────
-async function whisper(blob, mime) {
+// ══════════════════════════════════════════════════════
+// MASTERPROMPT INTERVIEW
+// ══════════════════════════════════════════════════════
+function masterNext() {
+  if (masterIdx >= MV.length) { masterDone(); return; }
+  const v = MV[masterIdx];
+  const intro = `Vraag ${v.id} van ${MV.length} — ${v.thema}. `;
+  if (curMode === 'hand') el('hs').textContent = `Vraag ${v.id}/${MV.length}: ${v.thema}`;
+  else { el('ds').textContent = `Vraag ${v.id}/${MV.length}: ${v.thema}`; }
+  curSess.messages.push({ role: 'assistant', content: intro + v.v });
+  addMsg('assistant', intro + v.v);
+  sv();
+  say(intro + v.v, () => {
+    if (curMode === 'hand') { setRb('ready'); el('hs').textContent = `Vraag ${v.id}/${MV.length} — houd ingedrukt om te antwoorden`; el('hh').textContent = 'Laat los als je klaar bent'; }
+    else { setDr('listen','👂','LUISTERT'); el('ds').textContent = `Zeg "Start bericht" voor vraag ${v.id}`; }
+  });
+}
+
+async function masterAnswer(txt) {
+  const v = MV[masterIdx];
+  curSess.messages.push({ role: 'user', content: txt });
+  addMsg('user', txt);
+  D.masterQ[v.id] = { thema: v.thema, vraag: v.v, antwoord: txt };
+  sv();
+
+  // Claude beoordeelt of antwoord volledig is
+  isProc = true;
+  if (curMode === 'hand') { setRb('proc'); el('hs').textContent = 'Verwerken...'; }
+  else { setDr('proc','⏳','CLAUDE'); }
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'x-api-key':D.ck, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001', max_tokens: 120,
+        system: `Je bent een interviewer. Vraag gesteld: "${v.v}". Antwoord ontvangen: "${txt}". Is dit antwoord voldoende volledig? Als ja, antwoord alleen met het woord COMPLEET. Als nee, stel één korte doorvraag in het Nederlands.`,
+        messages: [{ role: 'user', content: txt }]
+      })
+    });
+    const data = await res.json();
+    const reply = (data.content && data.content[0] && data.content[0].text || 'COMPLEET').trim();
+    isProc = false;
+
+    if (reply.startsWith('COMPLEET')) {
+      masterIdx++;
+      say('Dank je.', () => masterNext());
+    } else {
+      curSess.messages.push({ role: 'assistant', content: reply });
+      addMsg('assistant', reply);
+      sv();
+      say(reply, () => {
+        if (curMode === 'hand') { setRb('ready'); el('hs').textContent = 'Aanvullende vraag — houd ingedrukt'; }
+        else { setDr('listen','👂','LUISTERT'); el('ds').textContent = 'Zeg "Start bericht" om te antwoorden'; }
+      });
+    }
+  } catch(e) {
+    isProc = false;
+    masterIdx++;
+    say('Dank je.', () => masterNext());
+  }
+}
+
+function masterDone() {
+  isMaster = false;
+  const tekst = 'Fantastisch! Alle zes vragen zijn beantwoord. Je kunt het resultaat downloaden met de knop hieronder en plakken in de masterprompt chat.';
+  curSess.messages.push({ role: 'assistant', content: tekst });
+  addMsg('assistant', tekst);
+  sv();
+  say(tekst);
+}
+
+// ══════════════════════════════════════════════════════
+// WHISPER
+// ══════════════════════════════════════════════════════
+async function callWhisper(blob, mime) {
   const ext = mime.includes('ogg') ? 'ogg' : 'webm';
   const fd = new FormData();
   fd.append('file', blob, 'rec.' + ext);
@@ -692,697 +857,198 @@ async function whisper(blob, mime) {
   fd.append('language', 'nl');
   fd.append('response_format', 'text');
   const r = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-    method: 'POST', headers: { Authorization: 'Bearer ' + D.ok }, body: fd
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + D.ok },
+    body: fd
   });
-  if (!r.ok) { const e=await r.json(); throw new Error(e.error?.message||'Whisper '+r.status); }
-  return await r.text();
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({}));
+    throw new Error((e.error && e.error.message) || 'Whisper fout ' + r.status);
+  }
+  return r.text();
 }
 
-// ── TTS ────────────────────────────────────────────────────────
-function say(text, cb, noState) {
+// ══════════════════════════════════════════════════════
+// TTS
+// ══════════════════════════════════════════════════════
+function say(text, cb) {
   window.speechSynthesis.cancel();
   isSpk = true;
-  if (!noState) {
-    if (curMode==='hand') setH('spk');
-    else setD('spk','🔊','SPREEKT');
-  }
+  if (curMode === 'hand') setRb('spk');
+  else setDr('spk', '🔊', 'SPREEKT');
   const u = new SpeechSynthesisUtterance(text);
-  u.lang='nl-NL'; u.rate=1.0; u.pitch=1.0;
-  const v = window.speechSynthesis.getVoices().find(v=>v.lang.startsWith('nl'));
+  u.lang = 'nl-NL'; u.rate = 1.0;
+  const v = window.speechSynthesis.getVoices().find(v => v.lang.startsWith('nl'));
   if (v) u.voice = v;
-  u.onend = u.onerror = () => { isSpk=false; if(cb) cb(); else { if(curMode==='hand'){setH('ready');$('hstat').textContent='Houd ingedrukt om te spreken';$('hhint').textContent='Laat los als je klaar bent';$('tbox').classList.remove('on');}  } };
+  u.onend = u.onerror = () => {
+    isSpk = false;
+    if (cb) cb();
+    else {
+      if (curMode === 'hand') { setRb('ready'); el('hs').textContent = 'Houd ingedrukt om te spreken'; el('hh').textContent = 'Laat los als je klaar bent'; el('tb').classList.remove('on'); }
+    }
+  };
   window.speechSynthesis.speak(u);
 }
 
-// ── CLAUDE ─────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
+// CLAUDE API
+// ══════════════════════════════════════════════════════
 async function claudeCall(text) {
   isProc = true;
   const isStart = text === '[START]';
-  if (curMode==='hand') { setH('proc'); $('hstat').textContent='Claude denkt na...'; }
-  else { setD('proc','⏳','CLAUDE'); $('dstat').textContent='Claude denkt na...'; $('dsub').textContent=''; }
+  if (curMode === 'hand') { setRb('proc'); el('hs').textContent = 'Claude denkt na...'; }
+  else { setDr('proc', '⏳', 'CLAUDE'); el('ds').textContent = 'Claude denkt na...'; el('dd').textContent = ''; }
 
   if (!isStart) {
-    curSess.messages.push({ role:'user', content:text });
+    curSess.messages.push({ role: 'user', content: text });
     addMsg('user', text);
-    save();
+    sv();
   }
 
   const prof = Object.keys(D.profiel).length
-    ? '\n\nBekende info:\n' + Object.entries(D.profiel).map(([k,v])=>`- ${k}: ${v}`).join('\n') : '';
+    ? '\n\nBekende info:\n' + Object.entries(D.profiel).map(([k,v]) => `- ${k}: ${v}`).join('\n') : '';
 
-  const sys = curSess.isKennismaking
-    ? `Je bent een vriendelijke persoonlijke assistent. Leer de gebruiker kennen via een naturlijk gesprek. Stel één persoonlijke vraag tegelijk. Doorvraag op antwoorden. Vloeiend Nederlands. Geen bullets. Korte gesproken antwoorden. Bij [START]: stel jezelf voor en stel de eerste vraag.${prof}`
-    : `Je bent een slimme persoonlijke assistent. Vloeiend Nederlands. Kort en gesproken — max 3 zinnen. Geen bullets. Huidige sessie: "${curSess.name}".${prof}`;
+  const sys = curSess.isKenn
+    ? `Je bent een vriendelijke persoonlijke assistent. Leer de gebruiker kennen via een natuurlijk gesprek. Stel één persoonlijke vraag tegelijk. Vloeiend Nederlands. Geen bullets. Korte gesproken antwoorden. Bij [START]: stel jezelf voor en stel de eerste vraag.${prof}`
+    : `Je bent een slimme persoonlijke assistent. Vloeiend Nederlands. Max 3 zinnen. Geen bullets. Sessie: "${curSess.name}".${prof}`;
+
+  const msgs = isStart ? [{ role:'user', content:'[START]' }] : curSess.messages;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type':'application/json', 'x-api-key':D.ck, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:350, system:sys, messages: isStart?[{role:'user',content:'[START]'}]:curSess.messages })
+      body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:350, system:sys, messages:msgs })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
-    const reply = data.content?.[0]?.text || 'Sorry, geen antwoord.';
+    const reply = (data.content && data.content[0] && data.content[0].text) || 'Sorry, geen antwoord.';
     curSess.messages.push({ role:'assistant', content:reply });
     addMsg('assistant', reply);
-    save();
-    if (curSess.isKennismaking) updateProfiel();
+    sv();
+    if (curSess.isKenn) updateProfiel();
     isProc = false;
-    if (curMode==='hand') {
-      say(reply, () => { setH('ready'); $('hstat').textContent='Houd ingedrukt om te spreken'; $('hhint').textContent='Laat los als je klaar bent'; $('tbox').classList.remove('on'); });
+    if (curMode === 'hand') {
+      say(reply, () => { setRb('ready'); el('hs').textContent = 'Houd ingedrukt om te spreken'; el('hh').textContent = 'Laat los als je klaar bent'; el('tb').classList.remove('on'); });
     } else {
-      say(reply, () => { setD('listen','👂','LUISTERT'); $('dstat').textContent='Zeg "Start bericht" om verder te gaan'; $('dsub').textContent='Of "Wissel sessie" / "Nieuwe sessie [naam]"'; driveStart(); }, true);
+      say(reply, () => { setDr('listen','👂','LUISTERT'); el('ds').textContent = 'Zeg "Start bericht" om verder te gaan'; el('dd').textContent = 'Of "Wissel sessie" / "Nieuwe sessie [naam]"'; drListen(); });
     }
   } catch(e) {
-    addMsg('sys', 'Fout: ' + (e.message||'Controleer je sleutels.'));
     isProc = false;
-    if (curMode==='hand') { setH('ready'); $('hstat').textContent='Fout — probeer opnieuw.'; }
-    else { say('Er ging iets mis. Zeg start bericht om opnieuw te proberen.', driveStart, true); }
+    addMsg('sys', 'Fout: ' + (e.message || 'Controleer je sleutels.'));
+    if (curMode === 'hand') { setRb('ready'); el('hs').textContent = 'Fout — probeer opnieuw.'; }
+    else { say('Er ging iets mis. Zeg start bericht.', drListen); }
   }
 }
 
-// ── PROFIEL ────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
+// PROFIEL BIJWERKEN
+// ══════════════════════════════════════════════════════
 async function updateProfiel() {
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers:{'Content-Type':'application/json','x-api-key':D.ck,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:300,
-        system:'Extraheer persoonlijke feiten uit dit gesprek. Geef ALLEEN geldig JSON terug. Voorbeeld: {"naam":"Jan","werk":"developer"}. Alleen bevestigde feiten. Alleen JSON.',
-        messages: curSess.messages.slice(-20) })
-    });
-    const data = await res.json();
-    const parsed = JSON.parse((data.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
-    D.profiel = { ...D.profiel, ...parsed }; save();
-  } catch(e) {}
-}
-
-// ── STOP ALLES ─────────────────────────────────────────────────
-function stopAll() {
-  driveStop(); dRecOn=false; dConf=false;
-  if (mr && mr.state!=='inactive') { try{mr.stop();}catch(e){} }
-  if (micStream) { micStream.getTracks().forEach(t=>t.stop()); micStream=null; }
-  window.speechSynthesis.cancel();
-  isProc=false; isSpk=false; isRec=false;
-}
-
-// ════════════════════════════════════════
-// MASTERPROMPT INTERVIEW
-// ════════════════════════════════════════
-
-const MASTER_VRAGEN = [
-  {
-    id: 1,
-    vraag: "Laten we beginnen met Bureau G. Wat doet Bureau G precies? Ik zie dat je e-mails, offertes, websites en huisstijlen noemt. Ben je een communicatie- of designbureau? Werk je alleen of met een team? En wat voor klanten bedien je typisch?",
-    thema: "Bureau G & werkcontext"
-  },
-  {
-    id: 2,
-    vraag: "De tweede vraag gaat over hoe diep je wilt gaan op persoonlijk vlak. Een masterprompt voor zakelijke taken kan met minder persoonlijke informatie toe dan één die ook privézaken aanraakt. Denk aan je gezin, je gezondheid, je persoonlijke waarden. Waar ligt voor jou de grens?",
-    thema: "Privé vs zakelijk"
-  },
-  {
-    id: 3,
-    vraag: "Vraag drie gaat over de scope van mijn handelen. Wat bedoel je precies als je zegt dat ik moet handelen zoals jij? Mag ik op termijn autonoom e-mails versturen namens jou, of wil je altijd eerst zelf goedkeuren? Dit bepaalt het hele ontwerp van de masterprompt.",
-    thema: "Autonomie en controle"
-  },
-  {
-    id: 4,
-    vraag: "Vierde vraag: heb je al materiaal beschikbaar dat ik kan analyseren? Denk aan oude e-mails, offertes die je hebt verstuurd, ontwerpen die je hebt gemaakt. Hoe meer voorbeelden ik heb van hoe jij communiceert en werkt, hoe beter ik jouw stijl kan leren.",
-    thema: "Beschikbaar materiaal"
-  },
-  {
-    id: 5,
-    vraag: "De vijfde vraag is misschien de meest waardevolle. Wat is volgens jou de grootste valkuil? Waar gaat een AI die jou nadoet het eerst de mist in? In toon, in inhoud, in oordeel, in timing? Jouw intuïtie hierover is heel waardevol voor mij.",
-    thema: "Valkuilen en risico's"
-  },
-  {
-    id: 6,
-    vraag: "De laatste vraag is praktisch. Hoe wil je dit traject aanpakken? Eén lang gesprek nu, of liever in delen verspreid over de komende weken? Ik raad het laatste aan omdat je dan de tijd hebt om na te denken, maar het is volledig jouw keuze.",
-    thema: "Werkwijze en planning"
-  }
-];
-
-let masterMode    = false;
-let masterVraagIdx = 0;
-let masterAntwoorden = {};
-
-function startMasterInterview() {
-  D.ck = inClaude.value.trim();
-  D.ok = inOpenai.value.trim();
-  if (!D.ck || !D.ok) { alert('Vul eerst beide API-sleutels in.'); return; }
-  save();
-
-  // Maak of hergebruik masterprompt sessie
-  let ms = D.sessions.find(s => s.isMasterprompt);
-  if (!ms) {
-    ms = { id: Date.now(), name: '🧠 Masterprompt Interview', messages: [], isMasterprompt: true };
-    D.sessions.push(ms);
-    save();
-  }
-  curSess = ms;
-  masterMode = true;
-  masterVraagIdx = 0;
-
-  // Herstel al gegeven antwoorden
-  masterAntwoorden = D.masterAntwoorden || {};
-
-  // Bepaal welke vraag als eerste gesteld moet worden
-  // Sla vragen over die al beantwoord zijn
-  while (masterVraagIdx < MASTER_VRAGEN.length && masterAntwoorden[MASTER_VRAGEN[masterVraagIdx].id]) {
-    masterVraagIdx++;
-  }
-
-  renderSessions();
-  openChat(false).then(() => {
-    setTimeout(() => masterVolgendeVraag(), 600);
-  });
-}
-
-function masterVolgendeVraag() {
-  if (masterVraagIdx >= MASTER_VRAGEN.length) {
-    masterAfgerond();
-    return;
-  }
-
-  const v = MASTER_VRAGEN[masterVraagIdx];
-  const totaal = MASTER_VRAGEN.length;
-  const intro  = `Vraag ${v.id} van ${totaal} — ${v.thema}. `;
-
-  // Toon voortgang in UI
-  if (curMode === 'hand') {
-    $('hstat').textContent = `Vraag ${v.id}/${totaal}: ${v.thema}`;
-  } else {
-    $('dstat').textContent = `Vraag ${v.id}/${totaal}: ${v.thema}`;
-  }
-
-  // Voeg vraag toe als assistent bericht
-  curSess.messages.push({ role: 'assistant', content: intro + v.vraag });
-  addMsg('assistant', intro + v.vraag);
-  save();
-
-  say(intro + v.vraag, () => {
-    if (curMode === 'hand') {
-      setH('ready');
-      $('hstat').textContent = `Vraag ${v.id}/${totaal} — houd ingedrukt om te antwoorden`;
-      $('hhint').textContent = 'Laat los als je klaar bent';
-    } else {
-      setD('listen','👂','LUISTERT');
-      $('dstat').textContent = `Zeg "Start bericht" om vraag ${v.id} te beantwoorden`;
-    }
-  });
-}
-
-async function masterVerwerk(antwoord) {
-  const v = MASTER_VRAGEN[masterVraagIdx];
-
-  // Sla antwoord op
-  curSess.messages.push({ role: 'user', content: antwoord });
-  addMsg('user', antwoord);
-  masterAntwoorden[v.id] = { thema: v.thema, vraag: v.vraag, antwoord };
-  D.masterAntwoorden = masterAntwoorden;
-  save();
-
-  // Laat Claude doorvragen als het antwoord te kort of vaag is
-  isProc = true;
-  if (curMode==='hand') { setH('proc'); $('hstat').textContent='Verwerken...'; }
-  else { setD('proc','⏳','CLAUDE'); }
-
-  const sys = `Je bent een interviewer die een masterprompt opstelt voor Bert-Jan. Je stelt nu vraag ${v.id} van ${MASTER_VRAGEN.length}: "${v.vraag}". Het antwoord van Bert-Jan is: "${antwoord}". Beoordeel of het antwoord volledig genoeg is. Als het antwoord duidelijk en volledig is, zeg dan alleen: "COMPLEET". Als je één gerichte vervolgvraag wilt stellen om het antwoord te verdiepen, stel die dan in één zin. Spreek in het Nederlands. Geen lange uitleg.`;
-
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type':'application/json', 'x-api-key':D.ck, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:150, system:sys, messages:[{role:'user',content:antwoord}] })
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001', max_tokens: 300,
+        system: 'Extraheer persoonlijke feiten. Geef ALLEEN geldig JSON. Voorbeeld: {"naam":"Jan","werk":"developer"}. Alleen bevestigde feiten.',
+        messages: curSess.messages.slice(-20)
+      })
     });
     const data = await res.json();
-    const reply = data.content?.[0]?.text?.trim() || 'COMPLEET';
-    isProc = false;
-
-    if (reply === 'COMPLEET' || reply.startsWith('COMPLEET')) {
-      // Ga naar volgende vraag
-      masterVraagIdx++;
-      if (masterVraagIdx < MASTER_VRAGEN.length) {
-        say('Dank je. Dan nu de volgende vraag.', () => masterVolgendeVraag());
-      } else {
-        masterAfgerond();
-      }
-    } else {
-      // Doorvraag stellen
-      curSess.messages.push({ role:'assistant', content:reply });
-      addMsg('assistant', reply);
-      save();
-      say(reply, () => {
-        if (curMode==='hand') { setH('ready'); $('hstat').textContent='Aanvullende vraag — houd ingedrukt'; }
-        else { setD('listen','👂','LUISTERT'); $('dstat').textContent='Zeg "Start bericht" om te antwoorden'; }
-      });
-    }
-  } catch(e) {
-    isProc = false;
-    masterVraagIdx++;
-    say('Dank je. Volgende vraag.', () => masterVolgendeVraag());
-  }
+    const txt = (data.content && data.content[0] && data.content[0].text) || '{}';
+    const parsed = JSON.parse(txt.replace(/```json|```/g,'').trim());
+    D.profiel = Object.assign({}, D.profiel, parsed);
+    sv();
+  } catch(e) {}
 }
 
-async function masterAfgerond() {
-  masterMode = false;
-  const samenvatting = genereerMasterSamenvatting();
-  curSess.messages.push({ role:'assistant', content:samenvatting });
-  addMsg('assistant', samenvatting);
-  save();
-
-  say('Fantastisch, alle zes vragen zijn beantwoord! Ik sla nu alles op in Google Drive zodat we de masterprompt kunnen uitwerken.', async () => {
-    if (gToken) {
-      await exportMasterToDrive();
-      showToast('✅ Masterprompt antwoorden opgeslagen in Drive');
-    }
-    if (curMode==='hand') { setH('ready'); $('hstat').textContent='Interview afgerond — opgeslagen in Drive'; }
-    else { setD('idle','✅','KLAAR'); $('dstat').textContent='Interview afgerond'; }
-  });
-}
-
-function genereerMasterSamenvatting() {
-  const lines = ['Alle zes vragen zijn beantwoord. Hier is een samenvatting van jouw antwoorden:
-'];
-  MASTER_VRAGEN.forEach(v => {
-    const a = masterAntwoorden[v.id];
-    if (a) lines.push(`${v.id}. ${v.thema}: ${a.antwoord}`);
-  });
-  lines.push('
-Deze antwoorden worden opgeslagen in Google Drive en gebruikt om de masterprompt op te stellen.');
-  return lines.join('
-');
-}
-
-async function exportMasterToDrive() {
-  const datum = new Date().toISOString().slice(0, 10);
-
-  // JSON met alle antwoorden
-  const json = JSON.stringify({
-    type:         'masterprompt_interview',
-    datum,
-    antwoorden:   masterAntwoorden,
-    volledigGesprek: curSess.messages
-  }, null, 2);
-  await uploadToDrive('masterprompt_interview_' + datum + '.json', json, 'application/json');
-
-  // Leesbaar Markdown bestand voor claude.ai
-  const lines = [
-    '# Masterprompt Interview — Bert-Jan',
-    '',
-    '**Datum:** ' + new Date().toLocaleDateString('nl-NL'),
-    '',
-    '---',
-    '',
-    '## Antwoorden op de 6 vragen',
-    ''
-  ];
-  MASTER_VRAGEN.forEach(v => {
-    const a = masterAntwoorden[v.id];
-    lines.push(`### Vraag ${v.id}: ${v.thema}`);
-    lines.push('');
-    lines.push('**Vraag:** ' + v.vraag);
-    lines.push('');
-    lines.push('**Antwoord:** ' + (a ? a.antwoord : '*(niet beantwoord)*'));
-    lines.push('');
-  });
-  lines.push('---');
-  lines.push('');
-  lines.push('*Gegenereerd door AI Voice Assistent — klaar voor verwerking in masterprompt*');
-
-  await uploadToDrive('masterprompt_interview_' + datum + '.md', lines.join('
-'), 'text/markdown');
-}
-
-// ════════════════════════════════════════
-// GOOGLE DRIVE INTEGRATIE
-// ════════════════════════════════════════
-
-// OAuth2 configuratie — Google Drive API
-// Gebruikt implicit flow (geen backend nodig)
-const GDRIVE_CLIENT_ID = ''; // Wordt ingesteld via prompt
-const GDRIVE_SCOPES    = 'https://www.googleapis.com/auth/drive.file';
-const FOLDER_NAME      = 'AI Voice Assistent';
-
-let gToken     = null;   // OAuth access token
-let gFolderId  = null;   // ID van de app-map in Drive
-let gClientId  = D.gClientId || '';
-
-// Herstel token en client ID
-if (D.gToken && D.gTokenExp && Date.now() < D.gTokenExp) {
-  gToken = D.gToken;
-}
-if (D.gClientId) {
-  gClientId = D.gClientId;
-}
-
-function updateDriveBadge() {
-  const badge  = $('drive-badge');
-  const dot    = $('drive-dot');
-  const txt    = $('drive-badge-txt');
-  const btnExp = $('btn-drive-export');
-  const btnH   = $('btn-export-hand');
-  const btnDr  = $('btn-export-drive');
-
-  if (gToken) {
-    badge.className = 'drive-badge';
-    dot.className   = 'dot';
-    txt.textContent = 'Verbonden met Google Drive ✓';
-    if (btnExp) { btnExp.style.display = 'block'; btnExp.disabled = !curSess; }
-    if (btnH)   btnH.style.display   = 'block';
-    if (btnDr)  btnDr.style.display  = 'block';
-  } else {
-    badge.className = 'drive-badge err';
-    dot.className   = 'dot off';
-    txt.textContent = 'Niet verbonden — klik om in te loggen';
-    if (btnExp) btnExp.style.display = 'none';
-    if (btnH)   btnH.style.display   = 'none';
-    if (btnDr)  btnDr.style.display  = 'none';
-  }
-}
-
-// ── OAUTH LOGIN ────────────────────────────────────────────────
-async function driveLogin() {
-  // Lees Client ID uit invoerveld
-  const inputEl = $('in-client-id');
-  const inputVal = inputEl ? inputEl.value.trim() : '';
-  if (inputVal) { gClientId = inputVal; D.gClientId = inputVal; save(); }
-
-  if (!gClientId) {
-    showToast('⚠️ Voer eerst je Google Client ID in het veld hierboven in');
-    if (inputEl) inputEl.focus();
-    return;
-  }
-
-  // Stuur door naar Google OAuth
-  const params = new URLSearchParams({
-    client_id:     gClientId,
-    redirect_uri:  location.origin + location.pathname,
-    response_type: 'token',
-    scope:         GDRIVE_SCOPES,
-    prompt:        'select_account'
-  });
-  location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params;
-}
-
-// ── VERWERK OAUTH REDIRECT ─────────────────────────────────────
-function handleOAuthRedirect() {
-  const hash = location.hash;
-  if (!hash || !hash.includes('access_token')) return;
-
-  const params = new URLSearchParams(hash.slice(1));
-  const token  = params.get('access_token');
-  const expIn  = parseInt(params.get('expires_in') || '3600');
-
-  if (token) {
-    gToken      = token;
-    D.gToken    = token;
-    D.gTokenExp = Date.now() + (expIn - 60) * 1000;
-    save();
-    // Verwijder token uit URL
-    history.replaceState(null, '', location.pathname);
-    updateDriveBadge();
-    showToast('✅ Verbonden met Google Drive!');
-  }
-}
-
-// ── MAAK/ZOEK APP MAP ──────────────────────────────────────────
-async function getOrCreateFolder() {
-  if (gFolderId) return gFolderId;
-
-  // Zoek bestaande map
-  const search = await gFetch(
-    `https://www.googleapis.com/drive/v3/files?q=name='${FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id,name)`
-  );
-  if (search.files && search.files.length > 0) {
-    gFolderId = search.files[0].id;
-    return gFolderId;
-  }
-
-  // Maak nieuwe map aan
-  const folder = await gFetch('https://www.googleapis.com/drive/v3/files', {
-    method: 'POST',
-    body: JSON.stringify({
-      name:     FOLDER_NAME,
-      mimeType: 'application/vnd.google-apps.folder'
-    })
-  });
-  gFolderId = folder.id;
-  return gFolderId;
-}
-
-// ── DRIVE API HELPER ───────────────────────────────────────────
-async function gFetch(url, opts = {}) {
-  if (!gToken) throw new Error('Niet ingelogd bij Google');
-  const res = await fetch(url, {
-    ...opts,
-    headers: {
-      'Authorization': 'Bearer ' + gToken,
-      'Content-Type':  'application/json',
-      ...(opts.headers || {})
-    }
-  });
-  if (res.status === 401) {
-    gToken = null; D.gToken = null; save();
-    updateDriveBadge();
-    throw new Error('Google sessie verlopen — log opnieuw in');
-  }
-  return res.json();
-}
-
-// ── BESTAND UPLOADEN NAAR DRIVE ────────────────────────────────
-async function uploadToDrive(filename, content, mimeType) {
-  const folderId = await getOrCreateFolder();
-
-  // Check of bestand al bestaat (voor overschrijven)
-  const search = await gFetch(
-    `https://www.googleapis.com/drive/v3/files?q=name='${filename}' and '${folderId}' in parents and trashed=false&fields=files(id)`
-  );
-
-  const metadata = {
-    name:    filename,
-    parents: search.files?.length ? undefined : [folderId]
-  };
-
-  const boundary = 'boundary' + Date.now();
-  const body = [
-    '--' + boundary,
-    'Content-Type: application/json; charset=UTF-8',
-    '',
-    JSON.stringify(metadata),
-    '--' + boundary,
-    'Content-Type: ' + mimeType,
-    '',
-    content,
-    '--' + boundary + '--'
-  ].join('
-');
-
-  const fileId = search.files?.[0]?.id;
-  const method = fileId ? 'PATCH' : 'POST';
-  const url    = fileId
-    ? `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`
-    : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
-
-  const res = await fetch(url, {
-    method,
-    headers: {
-      'Authorization':  'Bearer ' + gToken,
-      'Content-Type':   `multipart/related; boundary=${boundary}`
-    },
-    body
-  });
-  return res.json();
-}
-
-// ── EXPORTEER SESSIE ───────────────────────────────────────────
-async function exportToDrive() {
-  if (!gToken)    { showToast('Verbind eerst met Google Drive'); return; }
-  if (!curSess)   { showToast('Geen actieve sessie'); return; }
-  if (!curSess.messages.length) { showToast('Sessie is nog leeg'); return; }
-
-  showToast('⏳ Opslaan in Drive...');
-
-  const datum    = new Date().toISOString().slice(0, 10);
-  const safeName = curSess.name.replace(/[^a-zA-Z0-9\s-]/g, '').trim().replace(/\s+/g, '_');
-  const baseName = `${safeName}_${datum}`;
-
-  // 1. JSON — volledige data
-  const jsonData = JSON.stringify({
-    sessie:    curSess.name,
-    aangemaakt: new Date(curSess.id).toISOString(),
-    geëxporteerd: new Date().toISOString(),
-    berichten: curSess.messages,
-    profiel:   D.profiel
-  }, null, 2);
-  await uploadToDrive(baseName + '.json', jsonData, 'application/json');
-
-  // 2. Markdown — leesbaar voor claude.ai
-  const md = generateMarkdown(curSess);
-  await uploadToDrive(baseName + '.md', md, 'text/markdown');
-
-  // 3. Profiel altijd bijwerken
-  const profielMd = generateProfielMarkdown();
-  await uploadToDrive('profiel.md', profielMd, 'text/markdown');
-
-  showToast('✅ Opgeslagen in Drive: ' + FOLDER_NAME + '/' + baseName);
-}
-
-// ── GENEREER MARKDOWN VOOR CLAUDE.AI ──────────────────────────
-function generateMarkdown(s) {
-  const lines = [
-    '# Sessie: ' + s.name,
-    '',
-    '**Datum:** ' + new Date(s.id).toLocaleDateString('nl-NL'),
-    '**Geëxporteerd:** ' + new Date().toLocaleString('nl-NL'),
-    '',
-    '---',
-    ''
-  ];
-
-  s.messages.forEach(m => {
-    if (m.role === 'user') {
-      lines.push('**Bert-Jan:** ' + m.content);
-    } else if (m.role === 'assistant') {
-      lines.push('**Assistent:** ' + m.content);
-    }
-    lines.push('');
-  });
-
-  lines.push('---');
-  lines.push('');
-  lines.push('*Gegenereerd door AI Voice Assistent*');
-  return lines.join('
-');
-}
-
-function generateProfielMarkdown() {
-  const lines = [
-    '# Persoonlijk profiel — Bert-Jan',
-    '',
-    '**Bijgewerkt:** ' + new Date().toLocaleString('nl-NL'),
-    '',
-    '---',
-    ''
-  ];
-  Object.entries(D.profiel).forEach(([k, v]) => {
-    lines.push(`**${k}:** ${v}`);
-    lines.push('');
-  });
-  return lines.join('
-');
-}
-
-// ── DOWNLOAD ALS MARKDOWN ─────────────────────────────────────
-function downloadMarkdown() {
+// ══════════════════════════════════════════════════════
+// DOWNLOAD ALS MARKDOWN
+// ══════════════════════════════════════════════════════
+function downloadMd() {
   const s = curSess;
-  if (!s) { showToast('Geen actieve sessie om te downloaden'); return; }
+  if (!s) { toast('Geen actieve sessie'); return; }
+  const datum = new Date().toISOString().slice(0, 10);
+  let lines = [];
 
-  let md;
-  if (s.isMasterprompt && Object.keys(masterAntwoorden).length > 0) {
-    // Masterprompt interview export
-    const lines = [
+  if (s.isMaster && Object.keys(D.masterQ).length > 0) {
+    lines = [
       '# Masterprompt Interview — Bert-Jan',
       '',
       '**Datum:** ' + new Date().toLocaleDateString('nl-NL'),
       '',
       '---',
-      '',
-      '## Antwoorden op de 6 vragen',
       ''
     ];
-    MASTER_VRAGEN.forEach(v => {
-      const a = masterAntwoorden[v.id];
+    MV.forEach(v => {
+      const a = D.masterQ[v.id];
       lines.push('### Vraag ' + v.id + ': ' + v.thema);
       lines.push('');
-      lines.push('**Vraag:** ' + v.vraag);
+      lines.push('**Vraag:** ' + v.v);
       lines.push('');
       lines.push('**Antwoord:** ' + (a ? a.antwoord : '*(niet beantwoord)*'));
       lines.push('');
     });
-    lines.push('---');
-    lines.push('');
-    lines.push('*Gegenereerd door AI Voice Assistent*');
-    md = lines.join('
-');
   } else {
-    md = generateMarkdown(s);
+    lines = [
+      '# Sessie: ' + s.name,
+      '',
+      '**Datum:** ' + new Date(s.id).toLocaleDateString('nl-NL'),
+      '',
+      '---',
+      ''
+    ];
+    (s.messages || []).forEach(m => {
+      lines.push((m.role === 'user' ? '**Bert-Jan:** ' : '**Assistent:** ') + m.content);
+      lines.push('');
+    });
   }
+  lines.push('---');
+  lines.push('*Gegenereerd door AI Voice Assistent*');
 
-  const datum    = new Date().toISOString().slice(0, 10);
-  const safeName = s.name.replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_') || 'sessie';
-  const filename = safeName + '_' + datum + '.md';
-
+  const md   = lines.join('\n');
+  const name = s.name.replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_') || 'sessie';
   const blob = new Blob([md], { type: 'text/markdown' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href = url; a.download = filename;
+  a.href = url; a.download = name + '_' + datum + '.md';
   document.body.appendChild(a); a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast('✅ Gedownload: ' + filename);
+  toast('✅ Gedownload: ' + name + '_' + datum + '.md');
 }
 
-// ── AUTO-EXPORT NA SESSIE ──────────────────────────────────────
-async function autoExport() {
-  if (!gToken || !curSess || curSess.messages.length < 2) return;
-  try { await exportToDrive(); } catch(e) { console.log('Auto-export mislukt:', e); }
+// ══════════════════════════════════════════════════════
+// STOP ALLES
+// ══════════════════════════════════════════════════════
+function stopAll() {
+  drStop();
+  dRecOn = false; dConf = false;
+  if (mRec && mRec.state !== 'inactive') { try { mRec.stop(); } catch(e) {} }
+  if (micStrm) { micStrm.getTracks().forEach(t => t.stop()); micStrm = null; }
+  window.speechSynthesis.cancel();
+  isProc = false; isSpk = false; isRec = false;
 }
 
-// ── TOAST MELDING ──────────────────────────────────────────────
-function showToast(msg) {
-  let t = document.getElementById('toast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'toast';
-    t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1c1c26;border:1px solid rgba(255,255,255,.15);color:#f0f0f5;font-size:12px;font-family:DM Mono,monospace;padding:8px 16px;border-radius:20px;z-index:9999;max-width:300px;text-align:center;transition:opacity .3s;';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg;
-  t.style.opacity = '1';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3000);
+// ══════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════
+function toast(msg) {
+  const t = el('toast');
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => { t.style.opacity = '0'; }, 3000);
 }
 
-// ── EVENT LISTENERS DRIVE ──────────────────────────────────────
-$('btn-drive-auth').addEventListener('click', driveLogin);
-$('btn-drive-export').addEventListener('click', exportToDrive);
-$('btn-download-md').addEventListener('click', downloadMarkdown);
-$('btn-master').addEventListener('click', startMasterInterview);
-
-// Herstel opgeslagen client ID in invoerveld
-if (D.gClientId) {
-  const el = $('in-client-id');
-  if (el) el.value = D.gClientId;
-}
-
-// ── AUTO-EXPORT BIJ TERUGGAAN ──────────────────────────────────
-const _origGoBack = goBack;
-// Override goBack om auto-export te doen
-function goBack() {
-  if (gToken && curSess && curSess.messages.length >= 2) {
-    autoExport().finally(() => {
-      stopAll();
-      showPage('pg-setup');
-      renderSessions();
-      renderProfiel();
-      chk();
-    });
-  } else {
-    stopAll();
-    showPage('pg-setup');
-    renderSessions();
-    renderProfiel();
-    chk();
-  }
-}
-
-// ── INIT ───────────────────────────────────────────────────────
-renderSessions();
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+// Herstel laatste sessie
+if (D.sessions.length) curSess = D.sessions[D.sessions.length - 1];
+renderSess();
 renderProfiel();
 chk();
-handleOAuthRedirect(); // Verwerk OAuth redirect na login
-updateDriveBadge();
 window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 window.speechSynthesis.getVoices();
 </script>
