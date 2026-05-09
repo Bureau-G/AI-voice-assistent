@@ -116,6 +116,13 @@ input::placeholder{color:var(--t3);}
 
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
+.drive-badge{display:flex;align-items:center;gap:6px;background:rgba(61,232,160,.06);border:1px solid rgba(61,232,160,.2);border-radius:8px;padding:8px 11px;font-size:11px;color:var(--g);font-family:'DM Mono',monospace;}
+.drive-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--g);flex-shrink:0;}
+.drive-badge .dot.off{background:var(--t3);}
+.drive-badge.err{border-color:rgba(240,80,80,.2);background:rgba(240,80,80,.06);color:var(--r);}
+.bexp{width:100%;padding:10px;font-size:12px;border-radius:8px;background:rgba(79,142,247,.1);color:var(--a);border:1px solid rgba(79,142,247,.25);font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;transition:all .15s;}
+.bexp:hover{background:rgba(79,142,247,.2);}
+.bexp:disabled{opacity:.4;cursor:not-allowed;}
 </style>
 </head>
 <body>
@@ -179,11 +186,24 @@ input::placeholder{color:var(--t3);}
   <div class="fg">
     <div class="lbl">Kennismaking</div>
     <button class="bkenn" id="btn-kenn">🤝 Start kennismakingsgesprek</button>
+    <button class="bkenn" id="btn-master" style="margin-top:6px;border-color:rgba(124,92,252,.4);color:var(--a2);">🧠 Start masterprompt interview</button>
   </div>
 
   <div class="fg" id="profiel-wrap" style="display:none">
     <div class="lbl">Jouw profiel</div>
     <div id="profiel-box" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--t2);background:var(--s);border:1px solid var(--b);border-radius:8px;padding:9px 11px;line-height:1.9;"></div>
+  </div>
+
+  <div class="div"></div>
+
+  <div class="fg">
+    <div class="lbl">Google Drive sync</div>
+    <div class="drive-badge err" id="drive-badge">
+      <div class="dot off" id="drive-dot"></div>
+      <span id="drive-badge-txt">Niet verbonden — klik om in te loggen</span>
+    </div>
+    <button class="bexp" id="btn-drive-auth" style="margin-top:7px;">🔗 Verbind met Google Drive</button>
+    <button class="bexp" id="btn-drive-export" style="margin-top:5px;display:none;" disabled>📤 Exporteer huidige sessie naar Drive</button>
   </div>
 </div>
 
@@ -201,6 +221,7 @@ input::placeholder{color:var(--t3);}
       <button class="btn bg" onclick="goBack()">← Terug</button>
       <button class="btn bg" onclick="clearChat()">Wis chat</button>
     </div>
+    <button class="bexp" id="btn-export-hand" onclick="exportToDrive()" style="max-width:300px;display:none;">📤 Sla op in Drive</button>
   </div>
 
   <!-- Rijmodus paneel -->
@@ -221,6 +242,7 @@ input::placeholder{color:var(--t3);}
       <button class="btn bg" onclick="goBack()">← Terug</button>
       <button class="btn bg" onclick="clearChat()">Wis chat</button>
     </div>
+    <button class="bexp" id="btn-export-drive" onclick="exportToDrive()" style="max-width:300px;display:none;">📤 Sla op in Drive</button>
   </div>
 </div>
 
@@ -753,10 +775,556 @@ function stopAll() {
   isProc=false; isSpk=false; isRec=false;
 }
 
+// ════════════════════════════════════════
+// MASTERPROMPT INTERVIEW
+// ════════════════════════════════════════
+
+const MASTER_VRAGEN = [
+  {
+    id: 1,
+    vraag: "Laten we beginnen met Bureau G. Wat doet Bureau G precies? Ik zie dat je e-mails, offertes, websites en huisstijlen noemt. Ben je een communicatie- of designbureau? Werk je alleen of met een team? En wat voor klanten bedien je typisch?",
+    thema: "Bureau G & werkcontext"
+  },
+  {
+    id: 2,
+    vraag: "De tweede vraag gaat over hoe diep je wilt gaan op persoonlijk vlak. Een masterprompt voor zakelijke taken kan met minder persoonlijke informatie toe dan één die ook privézaken aanraakt. Denk aan je gezin, je gezondheid, je persoonlijke waarden. Waar ligt voor jou de grens?",
+    thema: "Privé vs zakelijk"
+  },
+  {
+    id: 3,
+    vraag: "Vraag drie gaat over de scope van mijn handelen. Wat bedoel je precies als je zegt dat ik moet handelen zoals jij? Mag ik op termijn autonoom e-mails versturen namens jou, of wil je altijd eerst zelf goedkeuren? Dit bepaalt het hele ontwerp van de masterprompt.",
+    thema: "Autonomie en controle"
+  },
+  {
+    id: 4,
+    vraag: "Vierde vraag: heb je al materiaal beschikbaar dat ik kan analyseren? Denk aan oude e-mails, offertes die je hebt verstuurd, ontwerpen die je hebt gemaakt. Hoe meer voorbeelden ik heb van hoe jij communiceert en werkt, hoe beter ik jouw stijl kan leren.",
+    thema: "Beschikbaar materiaal"
+  },
+  {
+    id: 5,
+    vraag: "De vijfde vraag is misschien de meest waardevolle. Wat is volgens jou de grootste valkuil? Waar gaat een AI die jou nadoet het eerst de mist in? In toon, in inhoud, in oordeel, in timing? Jouw intuïtie hierover is heel waardevol voor mij.",
+    thema: "Valkuilen en risico's"
+  },
+  {
+    id: 6,
+    vraag: "De laatste vraag is praktisch. Hoe wil je dit traject aanpakken? Eén lang gesprek nu, of liever in delen verspreid over de komende weken? Ik raad het laatste aan omdat je dan de tijd hebt om na te denken, maar het is volledig jouw keuze.",
+    thema: "Werkwijze en planning"
+  }
+];
+
+let masterMode    = false;
+let masterVraagIdx = 0;
+let masterAntwoorden = {};
+
+function startMasterInterview() {
+  D.ck = inClaude.value.trim();
+  D.ok = inOpenai.value.trim();
+  if (!D.ck || !D.ok) { alert('Vul eerst beide API-sleutels in.'); return; }
+  save();
+
+  // Maak of hergebruik masterprompt sessie
+  let ms = D.sessions.find(s => s.isMasterprompt);
+  if (!ms) {
+    ms = { id: Date.now(), name: '🧠 Masterprompt Interview', messages: [], isMasterprompt: true };
+    D.sessions.push(ms);
+    save();
+  }
+  curSess = ms;
+  masterMode = true;
+  masterVraagIdx = 0;
+
+  // Herstel al gegeven antwoorden
+  masterAntwoorden = D.masterAntwoorden || {};
+
+  // Bepaal welke vraag als eerste gesteld moet worden
+  // Sla vragen over die al beantwoord zijn
+  while (masterVraagIdx < MASTER_VRAGEN.length && masterAntwoorden[MASTER_VRAGEN[masterVraagIdx].id]) {
+    masterVraagIdx++;
+  }
+
+  renderSessions();
+  openChat(false).then(() => {
+    setTimeout(() => masterVolgendeVraag(), 600);
+  });
+}
+
+function masterVolgendeVraag() {
+  if (masterVraagIdx >= MASTER_VRAGEN.length) {
+    masterAfgerond();
+    return;
+  }
+
+  const v = MASTER_VRAGEN[masterVraagIdx];
+  const totaal = MASTER_VRAGEN.length;
+  const intro  = `Vraag ${v.id} van ${totaal} — ${v.thema}. `;
+
+  // Toon voortgang in UI
+  if (curMode === 'hand') {
+    $('hstat').textContent = `Vraag ${v.id}/${totaal}: ${v.thema}`;
+  } else {
+    $('dstat').textContent = `Vraag ${v.id}/${totaal}: ${v.thema}`;
+  }
+
+  // Voeg vraag toe als assistent bericht
+  curSess.messages.push({ role: 'assistant', content: intro + v.vraag });
+  addMsg('assistant', intro + v.vraag);
+  save();
+
+  say(intro + v.vraag, () => {
+    if (curMode === 'hand') {
+      setH('ready');
+      $('hstat').textContent = `Vraag ${v.id}/${totaal} — houd ingedrukt om te antwoorden`;
+      $('hhint').textContent = 'Laat los als je klaar bent';
+    } else {
+      setD('listen','👂','LUISTERT');
+      $('dstat').textContent = `Zeg "Start bericht" om vraag ${v.id} te beantwoorden`;
+    }
+  });
+}
+
+async function masterVerwerk(antwoord) {
+  const v = MASTER_VRAGEN[masterVraagIdx];
+
+  // Sla antwoord op
+  curSess.messages.push({ role: 'user', content: antwoord });
+  addMsg('user', antwoord);
+  masterAntwoorden[v.id] = { thema: v.thema, vraag: v.vraag, antwoord };
+  D.masterAntwoorden = masterAntwoorden;
+  save();
+
+  // Laat Claude doorvragen als het antwoord te kort of vaag is
+  isProc = true;
+  if (curMode==='hand') { setH('proc'); $('hstat').textContent='Verwerken...'; }
+  else { setD('proc','⏳','CLAUDE'); }
+
+  const sys = `Je bent een interviewer die een masterprompt opstelt voor Bert-Jan. Je stelt nu vraag ${v.id} van ${MASTER_VRAGEN.length}: "${v.vraag}". Het antwoord van Bert-Jan is: "${antwoord}". Beoordeel of het antwoord volledig genoeg is. Als het antwoord duidelijk en volledig is, zeg dan alleen: "COMPLEET". Als je één gerichte vervolgvraag wilt stellen om het antwoord te verdiepen, stel die dan in één zin. Spreek in het Nederlands. Geen lange uitleg.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'x-api-key':D.ck, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:150, system:sys, messages:[{role:'user',content:antwoord}] })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text?.trim() || 'COMPLEET';
+    isProc = false;
+
+    if (reply === 'COMPLEET' || reply.startsWith('COMPLEET')) {
+      // Ga naar volgende vraag
+      masterVraagIdx++;
+      if (masterVraagIdx < MASTER_VRAGEN.length) {
+        say('Dank je. Dan nu de volgende vraag.', () => masterVolgendeVraag());
+      } else {
+        masterAfgerond();
+      }
+    } else {
+      // Doorvraag stellen
+      curSess.messages.push({ role:'assistant', content:reply });
+      addMsg('assistant', reply);
+      save();
+      say(reply, () => {
+        if (curMode==='hand') { setH('ready'); $('hstat').textContent='Aanvullende vraag — houd ingedrukt'; }
+        else { setD('listen','👂','LUISTERT'); $('dstat').textContent='Zeg "Start bericht" om te antwoorden'; }
+      });
+    }
+  } catch(e) {
+    isProc = false;
+    masterVraagIdx++;
+    say('Dank je. Volgende vraag.', () => masterVolgendeVraag());
+  }
+}
+
+async function masterAfgerond() {
+  masterMode = false;
+  const samenvatting = genereerMasterSamenvatting();
+  curSess.messages.push({ role:'assistant', content:samenvatting });
+  addMsg('assistant', samenvatting);
+  save();
+
+  say('Fantastisch, alle zes vragen zijn beantwoord! Ik sla nu alles op in Google Drive zodat we de masterprompt kunnen uitwerken.', async () => {
+    if (gToken) {
+      await exportMasterToDrive();
+      showToast('✅ Masterprompt antwoorden opgeslagen in Drive');
+    }
+    if (curMode==='hand') { setH('ready'); $('hstat').textContent='Interview afgerond — opgeslagen in Drive'; }
+    else { setD('idle','✅','KLAAR'); $('dstat').textContent='Interview afgerond'; }
+  });
+}
+
+function genereerMasterSamenvatting() {
+  const lines = ['Alle zes vragen zijn beantwoord. Hier is een samenvatting van jouw antwoorden:
+'];
+  MASTER_VRAGEN.forEach(v => {
+    const a = masterAntwoorden[v.id];
+    if (a) lines.push(`${v.id}. ${v.thema}: ${a.antwoord}`);
+  });
+  lines.push('
+Deze antwoorden worden opgeslagen in Google Drive en gebruikt om de masterprompt op te stellen.');
+  return lines.join('
+');
+}
+
+async function exportMasterToDrive() {
+  const datum = new Date().toISOString().slice(0, 10);
+
+  // JSON met alle antwoorden
+  const json = JSON.stringify({
+    type:         'masterprompt_interview',
+    datum,
+    antwoorden:   masterAntwoorden,
+    volledigGesprek: curSess.messages
+  }, null, 2);
+  await uploadToDrive('masterprompt_interview_' + datum + '.json', json, 'application/json');
+
+  // Leesbaar Markdown bestand voor claude.ai
+  const lines = [
+    '# Masterprompt Interview — Bert-Jan',
+    '',
+    '**Datum:** ' + new Date().toLocaleDateString('nl-NL'),
+    '',
+    '---',
+    '',
+    '## Antwoorden op de 6 vragen',
+    ''
+  ];
+  MASTER_VRAGEN.forEach(v => {
+    const a = masterAntwoorden[v.id];
+    lines.push(`### Vraag ${v.id}: ${v.thema}`);
+    lines.push('');
+    lines.push('**Vraag:** ' + v.vraag);
+    lines.push('');
+    lines.push('**Antwoord:** ' + (a ? a.antwoord : '*(niet beantwoord)*'));
+    lines.push('');
+  });
+  lines.push('---');
+  lines.push('');
+  lines.push('*Gegenereerd door AI Voice Assistent — klaar voor verwerking in masterprompt*');
+
+  await uploadToDrive('masterprompt_interview_' + datum + '.md', lines.join('
+'), 'text/markdown');
+}
+
+// ════════════════════════════════════════
+// GOOGLE DRIVE INTEGRATIE
+// ════════════════════════════════════════
+
+// OAuth2 configuratie — Google Drive API
+// Gebruikt implicit flow (geen backend nodig)
+const GDRIVE_CLIENT_ID = ''; // Wordt ingesteld via prompt
+const GDRIVE_SCOPES    = 'https://www.googleapis.com/auth/drive.file';
+const FOLDER_NAME      = 'AI Voice Assistent';
+
+let gToken     = null;   // OAuth access token
+let gFolderId  = null;   // ID van de app-map in Drive
+let gClientId  = D.gClientId || '';
+
+// Herstel token en client ID
+if (D.gToken && D.gTokenExp && Date.now() < D.gTokenExp) {
+  gToken = D.gToken;
+}
+if (D.gClientId) gClientId = D.gClientId;
+
+function updateDriveBadge() {
+  const badge  = $('drive-badge');
+  const dot    = $('drive-dot');
+  const txt    = $('drive-badge-txt');
+  const btnExp = $('btn-drive-export');
+  const btnH   = $('btn-export-hand');
+  const btnDr  = $('btn-export-drive');
+
+  if (gToken) {
+    badge.className = 'drive-badge';
+    dot.className   = 'dot';
+    txt.textContent = 'Verbonden met Google Drive ✓';
+    if (btnExp) { btnExp.style.display = 'block'; btnExp.disabled = !curSess; }
+    if (btnH)   btnH.style.display   = 'block';
+    if (btnDr)  btnDr.style.display  = 'block';
+  } else {
+    badge.className = 'drive-badge err';
+    dot.className   = 'dot off';
+    txt.textContent = 'Niet verbonden — klik om in te loggen';
+    if (btnExp) btnExp.style.display = 'none';
+    if (btnH)   btnH.style.display   = 'none';
+    if (btnDr)  btnDr.style.display  = 'none';
+  }
+}
+
+// ── OAUTH LOGIN ────────────────────────────────────────────────
+async function driveLogin() {
+  // Vraag Client ID als nog niet ingesteld
+  if (!gClientId) {
+    gClientId = prompt(
+      'Voer je Google OAuth Client ID in.
+
+' +
+      'Aanmaken via: console.cloud.google.com
+' +
+      '→ APIs & Services → Credentials → OAuth 2.0 Client ID
+' +
+      '→ Type: Web application
+' +
+      '→ Authorized redirect URI: ' + location.origin + location.pathname
+    );
+    if (!gClientId) return;
+    D.gClientId = gClientId; save();
+  }
+
+  // Open OAuth popup
+  const params = new URLSearchParams({
+    client_id:     gClientId,
+    redirect_uri:  location.origin + location.pathname,
+    response_type: 'token',
+    scope:         GDRIVE_SCOPES,
+    prompt:        'select_account'
+  });
+  const url = 'https://accounts.google.com/o/oauth2/v2/auth?' + params;
+
+  // Sla op dat we wachten op OAuth
+  sessionStorage.setItem('oauth_pending', '1');
+  location.href = url;
+}
+
+// ── VERWERK OAUTH REDIRECT ─────────────────────────────────────
+function handleOAuthRedirect() {
+  const hash = location.hash;
+  if (!hash || !hash.includes('access_token')) return;
+
+  const params = new URLSearchParams(hash.slice(1));
+  const token  = params.get('access_token');
+  const expIn  = parseInt(params.get('expires_in') || '3600');
+
+  if (token) {
+    gToken      = token;
+    D.gToken    = token;
+    D.gTokenExp = Date.now() + (expIn - 60) * 1000;
+    save();
+    // Verwijder token uit URL
+    history.replaceState(null, '', location.pathname);
+    updateDriveBadge();
+    showToast('✅ Verbonden met Google Drive!');
+  }
+}
+
+// ── MAAK/ZOEK APP MAP ──────────────────────────────────────────
+async function getOrCreateFolder() {
+  if (gFolderId) return gFolderId;
+
+  // Zoek bestaande map
+  const search = await gFetch(
+    `https://www.googleapis.com/drive/v3/files?q=name='${FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id,name)`
+  );
+  if (search.files && search.files.length > 0) {
+    gFolderId = search.files[0].id;
+    return gFolderId;
+  }
+
+  // Maak nieuwe map aan
+  const folder = await gFetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST',
+    body: JSON.stringify({
+      name:     FOLDER_NAME,
+      mimeType: 'application/vnd.google-apps.folder'
+    })
+  });
+  gFolderId = folder.id;
+  return gFolderId;
+}
+
+// ── DRIVE API HELPER ───────────────────────────────────────────
+async function gFetch(url, opts = {}) {
+  if (!gToken) throw new Error('Niet ingelogd bij Google');
+  const res = await fetch(url, {
+    ...opts,
+    headers: {
+      'Authorization': 'Bearer ' + gToken,
+      'Content-Type':  'application/json',
+      ...(opts.headers || {})
+    }
+  });
+  if (res.status === 401) {
+    gToken = null; D.gToken = null; save();
+    updateDriveBadge();
+    throw new Error('Google sessie verlopen — log opnieuw in');
+  }
+  return res.json();
+}
+
+// ── BESTAND UPLOADEN NAAR DRIVE ────────────────────────────────
+async function uploadToDrive(filename, content, mimeType) {
+  const folderId = await getOrCreateFolder();
+
+  // Check of bestand al bestaat (voor overschrijven)
+  const search = await gFetch(
+    `https://www.googleapis.com/drive/v3/files?q=name='${filename}' and '${folderId}' in parents and trashed=false&fields=files(id)`
+  );
+
+  const metadata = {
+    name:    filename,
+    parents: search.files?.length ? undefined : [folderId]
+  };
+
+  const boundary = 'boundary' + Date.now();
+  const body = [
+    '--' + boundary,
+    'Content-Type: application/json; charset=UTF-8',
+    '',
+    JSON.stringify(metadata),
+    '--' + boundary,
+    'Content-Type: ' + mimeType,
+    '',
+    content,
+    '--' + boundary + '--'
+  ].join('
+');
+
+  const fileId = search.files?.[0]?.id;
+  const method = fileId ? 'PATCH' : 'POST';
+  const url    = fileId
+    ? `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`
+    : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+
+  const res = await fetch(url, {
+    method,
+    headers: {
+      'Authorization':  'Bearer ' + gToken,
+      'Content-Type':   `multipart/related; boundary=${boundary}`
+    },
+    body
+  });
+  return res.json();
+}
+
+// ── EXPORTEER SESSIE ───────────────────────────────────────────
+async function exportToDrive() {
+  if (!gToken)    { showToast('Verbind eerst met Google Drive'); return; }
+  if (!curSess)   { showToast('Geen actieve sessie'); return; }
+  if (!curSess.messages.length) { showToast('Sessie is nog leeg'); return; }
+
+  showToast('⏳ Opslaan in Drive...');
+
+  const datum    = new Date().toISOString().slice(0, 10);
+  const safeName = curSess.name.replace(/[^a-zA-Z0-9\s-]/g, '').trim().replace(/\s+/g, '_');
+  const baseName = `${safeName}_${datum}`;
+
+  // 1. JSON — volledige data
+  const jsonData = JSON.stringify({
+    sessie:    curSess.name,
+    aangemaakt: new Date(curSess.id).toISOString(),
+    geëxporteerd: new Date().toISOString(),
+    berichten: curSess.messages,
+    profiel:   D.profiel
+  }, null, 2);
+  await uploadToDrive(baseName + '.json', jsonData, 'application/json');
+
+  // 2. Markdown — leesbaar voor claude.ai
+  const md = generateMarkdown(curSess);
+  await uploadToDrive(baseName + '.md', md, 'text/markdown');
+
+  // 3. Profiel altijd bijwerken
+  const profielMd = generateProfielMarkdown();
+  await uploadToDrive('profiel.md', profielMd, 'text/markdown');
+
+  showToast('✅ Opgeslagen in Drive: ' + FOLDER_NAME + '/' + baseName);
+}
+
+// ── GENEREER MARKDOWN VOOR CLAUDE.AI ──────────────────────────
+function generateMarkdown(s) {
+  const lines = [
+    '# Sessie: ' + s.name,
+    '',
+    '**Datum:** ' + new Date(s.id).toLocaleDateString('nl-NL'),
+    '**Geëxporteerd:** ' + new Date().toLocaleString('nl-NL'),
+    '',
+    '---',
+    ''
+  ];
+
+  s.messages.forEach(m => {
+    if (m.role === 'user') {
+      lines.push('**Bert-Jan:** ' + m.content);
+    } else if (m.role === 'assistant') {
+      lines.push('**Assistent:** ' + m.content);
+    }
+    lines.push('');
+  });
+
+  lines.push('---');
+  lines.push('');
+  lines.push('*Gegenereerd door AI Voice Assistent*');
+  return lines.join('
+');
+}
+
+function generateProfielMarkdown() {
+  const lines = [
+    '# Persoonlijk profiel — Bert-Jan',
+    '',
+    '**Bijgewerkt:** ' + new Date().toLocaleString('nl-NL'),
+    '',
+    '---',
+    ''
+  ];
+  Object.entries(D.profiel).forEach(([k, v]) => {
+    lines.push(`**${k}:** ${v}`);
+    lines.push('');
+  });
+  return lines.join('
+');
+}
+
+// ── AUTO-EXPORT NA SESSIE ──────────────────────────────────────
+async function autoExport() {
+  if (!gToken || !curSess || curSess.messages.length < 2) return;
+  try { await exportToDrive(); } catch(e) { console.log('Auto-export mislukt:', e); }
+}
+
+// ── TOAST MELDING ──────────────────────────────────────────────
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1c1c26;border:1px solid rgba(255,255,255,.15);color:#f0f0f5;font-size:12px;font-family:DM Mono,monospace;padding:8px 16px;border-radius:20px;z-index:9999;max-width:300px;text-align:center;transition:opacity .3s;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3000);
+}
+
+// ── EVENT LISTENERS DRIVE ──────────────────────────────────────
+$('btn-drive-auth').addEventListener('click', driveLogin);
+$('btn-drive-export').addEventListener('click', exportToDrive);
+$('btn-master').addEventListener('click', startMasterInterview);
+
+// ── AUTO-EXPORT BIJ TERUGGAAN ──────────────────────────────────
+const _origGoBack = goBack;
+// Override goBack om auto-export te doen
+function goBack() {
+  if (gToken && curSess && curSess.messages.length >= 2) {
+    autoExport().finally(() => {
+      stopAll();
+      showPage('pg-setup');
+      renderSessions();
+      renderProfiel();
+      chk();
+    });
+  } else {
+    stopAll();
+    showPage('pg-setup');
+    renderSessions();
+    renderProfiel();
+    chk();
+  }
+}
+
 // ── INIT ───────────────────────────────────────────────────────
 renderSessions();
 renderProfiel();
 chk();
+handleOAuthRedirect(); // Verwerk OAuth redirect na login
+updateDriveBadge();
 window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 window.speechSynthesis.getVoices();
 </script>
