@@ -4,1096 +4,759 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="AI Voice Assistent">
+<meta name="apple-mobile-web-app-title" content="AI Voice">
 <meta name="theme-color" content="#0a0a0f">
 <title>AI Voice Assistent</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c26;
-  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
-  --accent:#4f8ef7;--accent2:#7c5cfc;--green:#3de8a0;
-  --amber:#f5a623;--red:#f05050;--drive:#ff6b35;
-  --text:#f0f0f5;--text2:#8888aa;--text3:#55556a;
-  --radius:14px;--radius-sm:8px;
-}
+:root{--bg:#0a0a0f;--s:#13131a;--s2:#1c1c26;--b:rgba(255,255,255,0.08);--b2:rgba(255,255,255,0.15);--a:#4f8ef7;--a2:#7c5cfc;--g:#3de8a0;--am:#f5a623;--r:#f05050;--dr:#ff6b35;--t:#f0f0f5;--t2:#8888aa;--t3:#55556a;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t);font-family:'Syne',sans-serif;}
 #app{height:100%;display:flex;flex-direction:column;}
 
-/* HEADER */
-.header{padding:12px 18px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;}
-.logo{display:flex;align-items:center;gap:9px;}
-.logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:14px;}
-.logo-text{font-size:16px;font-weight:800;letter-spacing:-0.02em;}
-.logo-text span{color:var(--accent);}
-.mode-pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;font-family:'DM Mono',monospace;}
-.mode-pill.hand{background:rgba(61,232,160,0.12);color:var(--green);border:1px solid rgba(61,232,160,0.3);}
-.mode-pill.drive{background:rgba(255,107,53,0.12);color:var(--drive);border:1px solid rgba(255,107,53,0.3);}
+.hdr{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--b);flex-shrink:0;}
+.hdr-title{font-size:15px;font-weight:800;}
+.hdr-title span{color:var(--a);}
+.hdr-sess{font-family:'DM Mono',monospace;font-size:10px;color:var(--t2);background:var(--s2);border:1px solid var(--b);padding:3px 9px;border-radius:20px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-/* SCREENS */
-.screen{flex:1;overflow-y:auto;display:none;flex-direction:column;}
-.screen.active{display:flex;}
+.pg{flex:1;overflow-y:auto;display:none;flex-direction:column;padding:16px;gap:12px;}
+.pg.on{display:flex;}
 
-/* SETUP */
-#setup{padding:18px;gap:12px;}
-.setup-title{font-size:22px;font-weight:800;letter-spacing:-0.03em;line-height:1.2;}
-.setup-title span{color:var(--accent);}
-.field-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
-.field-group{display:flex;flex-direction:column;}
-input[type=text],input[type=password]{background:var(--surface);border:1px solid var(--border2);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:10px 12px;border-radius:var(--radius-sm);outline:none;width:100%;transition:border-color 0.2s;}
-input:focus{border-color:var(--accent);}
-input::placeholder{color:var(--text3);}
-.divider{height:1px;background:var(--border);flex-shrink:0;}
+h2{font-size:20px;font-weight:800;letter-spacing:-0.02em;}
+h2 span{color:var(--a);}
+.sub{font-size:12px;color:var(--t2);line-height:1.6;}
 
-/* MODE KEUZE */
-.mode-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.mode-card{padding:14px 12px;border-radius:var(--radius-sm);border:2px solid var(--border);cursor:pointer;transition:all 0.15s;text-align:center;}
-.mode-card:hover{border-color:var(--border2);}
-.mode-card.selected-hand{border-color:var(--green);background:rgba(61,232,160,0.06);}
-.mode-card.selected-drive{border-color:var(--drive);background:rgba(255,107,53,0.06);}
-.mode-card-icon{font-size:28px;margin-bottom:6px;}
-.mode-card-title{font-size:13px;font-weight:800;}
-.mode-card-sub{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.4;}
+.lbl{font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;}
+.fg{display:flex;flex-direction:column;}
+input{background:var(--s);border:1px solid var(--b2);color:var(--t);font-family:'DM Mono',monospace;font-size:13px;padding:10px 12px;border-radius:8px;outline:none;width:100%;}
+input:focus{border-color:var(--a);}
+input::placeholder{color:var(--t3);}
 
-/* SESSIES */
-.session-list{display:flex;flex-direction:column;gap:6px;}
-.sess-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border-color 0.15s,background 0.15s;}
-.sess-item:hover,.sess-item.selected{border-color:var(--accent);background:rgba(79,142,247,0.08);}
-.sess-name{font-size:13px;font-weight:600;}
-.sess-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text2);margin-top:2px;}
-.sess-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:4px 6px;border-radius:6px;transition:color 0.15s;flex-shrink:0;}
-.sess-del:hover{color:var(--red);}
-.new-sess-row{display:flex;gap:8px;}
-.new-sess-row input{flex:1;}
-.btn{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;padding:10px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
-.btn-accent{background:var(--accent);color:white;}
-.btn-accent:hover{background:#3a7de8;}
-.btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
-.btn-ghost:hover{background:var(--surface);color:var(--text);}
-.btn-start{width:100%;padding:14px;font-size:15px;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border:none;font-family:'Syne',sans-serif;font-weight:800;cursor:pointer;transition:opacity 0.15s,transform 0.1s;}
-.btn-start:active{transform:scale(0.98);}
-.btn-start:disabled{opacity:0.3;cursor:not-allowed;}
-.btn-kenn{width:100%;padding:11px;font-size:13px;border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);border:1px solid var(--border2);font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;transition:all 0.15s;}
-.btn-kenn:hover{border-color:var(--green);color:var(--green);}
-.profiel-box{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;line-height:1.9;display:none;}
+.mode-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mc{padding:12px 10px;border-radius:8px;border:2px solid var(--b);cursor:pointer;text-align:center;transition:all .15s;}
+.mc.sel-h{border-color:var(--g);background:rgba(61,232,160,.07);}
+.mc.sel-d{border-color:var(--dr);background:rgba(255,107,53,.07);}
+.mc-ico{font-size:24px;margin-bottom:4px;}
+.mc-t{font-size:12px;font-weight:800;}
+.mc-s{font-size:10px;color:var(--t2);margin-top:2px;line-height:1.3;}
+
+.slist{display:flex;flex-direction:column;gap:6px;}
+.si{background:var(--s);border:1px solid var(--b);border-radius:8px;padding:9px 11px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border-color .15s;}
+.si:hover,.si.sel{border-color:var(--a);background:rgba(79,142,247,.08);}
+.si-n{font-size:13px;font-weight:700;}
+.si-m{font-family:'DM Mono',monospace;font-size:10px;color:var(--t2);margin-top:1px;}
+.si-del{background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px;padding:3px 5px;}
+.si-del:hover{color:var(--r);}
+.add-row{display:flex;gap:7px;}
+.add-row input{flex:1;}
+
+.btn{font-family:'Syne',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;}
+.ba{background:var(--a);color:#fff;}
+.ba:hover{background:#3a7de8;}
+.bg{background:var(--s2);color:var(--t2);border:1px solid var(--b);}
+.bg:hover{background:var(--s);color:var(--t);}
+.bstart{width:100%;padding:14px;font-size:15px;border-radius:12px;background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:none;font-family:'Syne',sans-serif;font-weight:800;cursor:pointer;}
+.bstart:disabled{opacity:.3;cursor:not-allowed;}
+.bkenn{width:100%;padding:11px;font-size:13px;border-radius:8px;background:var(--s2);color:var(--t);border:1px solid var(--b2);font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;}
+.bkenn:hover{border-color:var(--g);color:var(--g);}
+
+.hint{font-size:11px;font-family:'DM Mono',monospace;text-align:center;min-height:16px;color:var(--am);}
+.hint.ok{color:var(--g);}
+
+.div{height:1px;background:var(--b);}
 
 /* CHAT */
 #chat{padding:0;}
-.chat-messages{flex:1;overflow-y:auto;padding:12px 12px 6px;display:flex;flex-direction:column;gap:8px;}
-.msg{padding:10px 13px;border-radius:var(--radius-sm);font-size:14px;line-height:1.65;max-width:90%;animation:fadeUp 0.2s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
-.msg.user{background:linear-gradient(135deg,rgba(79,142,247,0.18),rgba(124,92,252,0.12));border:1px solid rgba(79,142,247,0.25);color:var(--text);align-self:flex-end;}
-.msg.assistant{background:var(--surface);border:1px solid var(--border);color:var(--text);align-self:flex-start;}
-.msg.system{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);color:var(--amber);align-self:center;font-size:11px;font-family:'DM Mono',monospace;text-align:center;border-radius:20px;padding:4px 12px;max-width:100%;}
-.msg.drive-cmd{background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);color:var(--drive);align-self:center;font-size:11px;font-family:'DM Mono',monospace;text-align:center;border-radius:20px;padding:4px 12px;max-width:100%;}
+.msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.msg{padding:10px 13px;border-radius:8px;font-size:14px;line-height:1.65;max-width:90%;animation:fu .2s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.msg.user{background:linear-gradient(135deg,rgba(79,142,247,.18),rgba(124,92,252,.12));border:1px solid rgba(79,142,247,.25);align-self:flex-end;}
+.msg.assistant{background:var(--s);border:1px solid var(--b);align-self:flex-start;}
+.msg.sys{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:var(--am);align-self:center;font-size:11px;font-family:'DM Mono',monospace;text-align:center;border-radius:20px;padding:4px 12px;max-width:100%;}
+.msg.cmd{background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.2);color:var(--dr);align-self:center;font-size:11px;font-family:'DM Mono',monospace;text-align:center;border-radius:20px;padding:4px 12px;max-width:100%;}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+.empty-ico{font-size:34px;opacity:.2;}
+.empty-t{font-size:12px;color:var(--t3);text-align:center;line-height:1.7;}
 
-/* ── HANDMODUS PANEEL ── */
-#hand-panel{flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);padding:14px 14px 26px;display:flex;flex-direction:column;align-items:center;gap:10px;}
-.transcript-box{width:100%;max-width:340px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.2);border-radius:var(--radius-sm);padding:8px 11px;font-size:12px;color:var(--amber);font-family:'DM Mono',monospace;line-height:1.5;display:none;word-break:break-word;max-height:54px;overflow-y:auto;}
-.transcript-box.visible{display:block;}
-.rec-btn{width:90px;height:90px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:32px;transition:transform 0.1s,box-shadow 0.2s;background:var(--surface2);border:2px solid var(--border2);user-select:none;}
-.rec-btn:active{transform:scale(0.93);}
-.rec-btn.ready{background:rgba(61,232,160,0.1);border-color:var(--green);}
-.rec-btn.recording{background:rgba(240,80,80,0.15);border-color:var(--red);animation:recPulse 1s ease-in-out infinite;}
-.rec-btn.processing{background:rgba(124,92,252,0.1);border-color:var(--accent2);}
-.rec-btn.speaking{background:rgba(79,142,247,0.1);border-color:var(--accent);animation:recPulse 0.8s ease-in-out infinite;}
-.rec-btn.disabled{opacity:0.3;pointer-events:none;}
-@keyframes recPulse{0%,100%{box-shadow:0 0 0 0 rgba(61,232,160,0.3);}50%{box-shadow:0 0 0 12px rgba(61,232,160,0);}}
-.hand-status{font-size:12px;color:var(--text2);text-align:center;min-height:16px;max-width:280px;line-height:1.4;}
-.hand-hint{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center;}
-.hand-bottom{display:flex;gap:8px;width:100%;max-width:300px;}
-.hand-bottom button{flex:1;font-size:12px;padding:8px 10px;}
+/* HAND PANEEL */
+.hpanel{flex-shrink:0;background:var(--s);border-top:1px solid var(--b);padding:14px 14px 26px;display:flex;flex-direction:column;align-items:center;gap:9px;}
+.tbox{width:100%;max-width:320px;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--am);font-family:'DM Mono',monospace;line-height:1.5;display:none;word-break:break-word;}
+.tbox.on{display:block;}
+.rbtn{width:86px;height:86px;border-radius:50%;border:2px solid var(--b2);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;user-select:none;transition:transform .1s;}
+.rbtn:active{transform:scale(.93);}
+.rbtn.ready{border-color:var(--g);background:rgba(61,232,160,.1);}
+.rbtn.rec{border-color:var(--r);background:rgba(240,80,80,.15);animation:rp 1s ease-in-out infinite;}
+.rbtn.proc{border-color:var(--a2);background:rgba(124,92,252,.1);}
+.rbtn.spk{border-color:var(--a);background:rgba(79,142,247,.1);animation:rp .8s ease-in-out infinite;}
+.rbtn.off{opacity:.3;pointer-events:none;}
+@keyframes rp{0%,100%{box-shadow:0 0 0 0 rgba(61,232,160,.3);}50%{box-shadow:0 0 0 12px rgba(61,232,160,0);}}
+.hstat{font-size:12px;color:var(--t2);text-align:center;min-height:16px;max-width:260px;line-height:1.4;}
+.hhint{font-size:10px;color:var(--t3);font-family:'DM Mono',monospace;}
+.brow{display:flex;gap:7px;width:100%;max-width:280px;}
+.brow button{flex:1;font-size:11px;padding:8px;}
 
-/* ── RIJMODUS PANEEL ── */
-#drive-panel{flex-shrink:0;background:#0d0a07;border-top:2px solid rgba(255,107,53,0.3);padding:14px 14px 26px;display:flex;flex-direction:column;align-items:center;gap:10px;}
-.drive-status-ring{width:110px;height:110px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:3px solid rgba(255,107,53,0.3);transition:all 0.3s;}
-.drive-status-ring.idle{border-color:rgba(255,255,255,0.1);}
-.drive-status-ring.listening{border-color:var(--accent);animation:drivePulse 2s ease-in-out infinite;}
-.drive-status-ring.recording{border-color:var(--red);animation:drivePulse 0.7s ease-in-out infinite;}
-.drive-status-ring.processing{border-color:var(--accent2);animation:driveSpin 1.5s linear infinite;}
-.drive-status-ring.speaking{border-color:var(--drive);animation:drivePulse 0.9s ease-in-out infinite;}
-.drive-status-ring.confirm{border-color:var(--amber);animation:drivePulse 1s ease-in-out infinite;}
-.drive-status-ring.session{border-color:var(--green);animation:drivePulse 1s ease-in-out infinite;}
-@keyframes drivePulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
-@keyframes driveSpin{to{transform:rotate(360deg);}}
-.drive-icon{font-size:32px;}
-.drive-label{font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;text-align:center;}
-.drive-status{font-size:13px;color:var(--text);text-align:center;max-width:280px;line-height:1.5;min-height:18px;font-weight:600;}
-.drive-sub{font-size:11px;color:var(--text2);text-align:center;max-width:280px;line-height:1.4;font-family:'DM Mono',monospace;}
-.drive-cmds{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
-.cmd-pill{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);padding:3px 8px;border-radius:20px;}
-.cmd-pill.active{color:var(--drive);border-color:rgba(255,107,53,0.4);background:rgba(255,107,53,0.08);}
-.drive-bottom{display:flex;gap:8px;width:100%;max-width:300px;}
-.drive-bottom button{flex:1;font-size:12px;padding:8px 10px;}
+/* RIJD PANEEL */
+.dpanel{flex-shrink:0;background:#0d0907;border-top:2px solid rgba(255,107,53,.3);padding:14px 14px 26px;display:flex;flex-direction:column;align-items:center;gap:9px;}
+.dring{width:100px;height:100px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:3px solid rgba(255,255,255,.08);transition:all .3s;}
+.dring.idle{border-color:rgba(255,255,255,.08);}
+.dring.listen{border-color:var(--a);animation:dp 2s ease-in-out infinite;}
+.dring.rec{border-color:var(--r);animation:dp .7s ease-in-out infinite;}
+.dring.proc{border-color:var(--a2);animation:ds 1.5s linear infinite;}
+.dring.spk{border-color:var(--dr);animation:dp .9s ease-in-out infinite;}
+.dring.conf{border-color:var(--am);animation:dp 1s ease-in-out infinite;}
+@keyframes dp{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+@keyframes ds{to{transform:rotate(360deg);}}
+.dico{font-size:28px;}
+.dlbl{font-size:9px;color:var(--t2);font-family:'DM Mono',monospace;}
+.dstat{font-size:13px;font-weight:700;text-align:center;max-width:270px;line-height:1.5;}
+.dsub{font-size:10px;color:var(--t2);text-align:center;max-width:270px;font-family:'DM Mono',monospace;line-height:1.4;}
+.cpills{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
+.cp{font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);background:var(--s2);border:1px solid var(--b);padding:2px 7px;border-radius:20px;}
+.cp.on{color:var(--dr);border-color:rgba(255,107,53,.4);background:rgba(255,107,53,.08);}
 
-.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;}
-.empty-icon{font-size:34px;opacity:0.2;}
-.empty-text{font-size:13px;color:var(--text3);text-align:center;line-height:1.7;}
 ::-webkit-scrollbar{width:3px;}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="header">
-    <div class="logo">
-      <div class="logo-icon">🎙️</div>
-      <div class="logo-text">AI Voice <span>Assistent</span></div>
-    </div>
-    <div class="mode-pill hand" id="mode-pill">📱 Hand</div>
+
+<div class="hdr">
+  <div class="hdr-title">AI Voice <span>Assistent</span></div>
+  <div class="hdr-sess" id="hdr-sess">—</div>
+</div>
+
+<!-- ══ SETUP ══ -->
+<div class="pg on" id="pg-setup">
+  <h2>Jouw<br><span>AI assistent</span></h2>
+
+  <div class="fg">
+    <div class="lbl">Anthropic sleutel (Claude)</div>
+    <input type="password" id="in-claude" placeholder="sk-ant-..."/>
+  </div>
+  <div class="fg">
+    <div class="lbl">OpenAI sleutel (Whisper)</div>
+    <input type="password" id="in-openai" placeholder="sk-..."/>
   </div>
 
-  <!-- ══ SETUP ══ -->
-  <div class="screen active" id="setup">
-    <div class="setup-title">Jouw persoonlijke<br><span>AI assistent</span></div>
+  <div class="div"></div>
 
-    <div class="field-group">
-      <div class="field-label">Anthropic API-sleutel (Claude)</div>
-      <input type="password" id="api-claude" placeholder="sk-ant-..." autocomplete="off"/>
-    </div>
-    <div class="field-group">
-      <div class="field-label">OpenAI API-sleutel (Whisper)</div>
-      <input type="password" id="api-openai" placeholder="sk-..." autocomplete="off"/>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- MODUS KEUZE -->
-    <div class="field-group">
-      <div class="field-label">Kies modus</div>
-      <div class="mode-choice">
-        <div class="mode-card selected-hand" id="card-hand" onclick="selectMode('hand')">
-          <div class="mode-card-icon">📱</div>
-          <div class="mode-card-title">Handmodus</div>
-          <div class="mode-card-sub">Knop ingedrukt houden. Transcript zichtbaar op scherm.</div>
-        </div>
-        <div class="mode-card" id="card-drive" onclick="selectMode('drive')">
-          <div class="mode-card-icon">🚗</div>
-          <div class="mode-card-title">Rijmodus</div>
-          <div class="mode-card-sub">Volledig spraak­gestuurd. Ogen op de weg.</div>
-        </div>
+  <div class="fg">
+    <div class="lbl">Modus</div>
+    <div class="mode-row">
+      <div class="mc sel-h" id="mc-hand" onclick="pickMode('hand')">
+        <div class="mc-ico">📱</div>
+        <div class="mc-t">Handmodus</div>
+        <div class="mc-s">Knop ingedrukt. Transcript op scherm.</div>
       </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- SESSIES -->
-    <div class="field-group">
-      <div class="field-label">Sessies</div>
-      <div class="session-list" id="sess-list"></div>
-    </div>
-    <div class="field-group">
-      <div class="field-label">Nieuwe sessie</div>
-      <div class="new-sess-row">
-        <input type="text" id="new-sess-input" placeholder="Beschrijf je idee..."/>
-        <button class="btn btn-accent" id="btn-add">+</button>
+      <div class="mc" id="mc-drive" onclick="pickMode('drive')">
+        <div class="mc-ico">🚗</div>
+        <div class="mc-t">Rijmodus</div>
+        <div class="mc-s">Volledig spraak­gestuurd. Handsfree.</div>
       </div>
-    </div>
-
-    <button class="btn-start" id="btn-start" disabled>Starten →</button>
-    <div id="ready-hint" style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center;min-height:16px;"></div>
-
-    <div class="divider"></div>
-    <div class="field-group">
-      <div class="field-label">Kennismaking & Profiel</div>
-      <button class="btn-kenn" id="btn-kenn">🤝 Start kennismakingsgesprek</button>
-    </div>
-    <div class="field-group" id="profiel-group" style="display:none">
-      <div class="field-label">Jouw profiel</div>
-      <div class="profiel-box" id="profiel-box"></div>
     </div>
   </div>
 
-  <!-- ══ CHAT ══ -->
-  <div class="screen" id="chat">
-    <div class="chat-messages" id="messages"></div>
+  <div class="div"></div>
 
-    <!-- HANDMODUS PANEEL -->
-    <div id="hand-panel" style="display:none">
-      <div class="transcript-box" id="transcript-box"></div>
-      <button class="rec-btn disabled" id="rec-btn">🎙️</button>
-      <div class="hand-status" id="hand-status">Even geduld...</div>
-      <div class="hand-hint" id="hand-hint">Initialiseren...</div>
-      <div class="hand-bottom">
-        <button class="btn btn-ghost" id="btn-back-hand">← Terug</button>
-        <button class="btn btn-ghost" id="btn-clear-hand">Wis chat</button>
-      </div>
+  <div class="fg">
+    <div class="lbl">Sessies</div>
+    <div class="slist" id="slist"></div>
+  </div>
+  <div class="fg">
+    <div class="lbl">Nieuwe sessie aanmaken</div>
+    <div class="add-row">
+      <input type="text" id="in-sess" placeholder="Geef je sessie een naam..."/>
+      <button class="btn ba" id="btn-add">+</button>
     </div>
+  </div>
 
-    <!-- RIJMODUS PANEEL -->
-    <div id="drive-panel" style="display:none">
-      <div class="drive-status-ring idle" id="drive-ring">
-        <div class="drive-icon" id="drive-icon">🚗</div>
-        <div class="drive-label" id="drive-label">WACHT</div>
-      </div>
-      <div class="drive-status" id="drive-status">Zeg "Start bericht" om te beginnen</div>
-      <div class="drive-sub" id="drive-sub">Of "Wissel sessie" / "Nieuwe sessie [naam]"</div>
-      <div class="drive-cmds">
-        <div class="cmd-pill" id="cmd-start">Start bericht</div>
-        <div class="cmd-pill" id="cmd-stop">Stop bericht</div>
-        <div class="cmd-pill" id="cmd-switch">Wissel sessie</div>
-        <div class="cmd-pill" id="cmd-new">Nieuwe sessie</div>
-      </div>
-      <div class="drive-bottom">
-        <button class="btn btn-ghost" id="btn-back-drive">← Terug</button>
-        <button class="btn btn-ghost" id="btn-clear-drive">Wis chat</button>
-      </div>
+  <button class="bstart" id="btn-start" disabled>Starten →</button>
+  <div class="hint" id="hint-ready">Vul beide sleutels in en maak een sessie aan</div>
+
+  <div class="div"></div>
+
+  <div class="fg">
+    <div class="lbl">Kennismaking</div>
+    <button class="bkenn" id="btn-kenn">🤝 Start kennismakingsgesprek</button>
+  </div>
+
+  <div class="fg" id="profiel-wrap" style="display:none">
+    <div class="lbl">Jouw profiel</div>
+    <div id="profiel-box" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--t2);background:var(--s);border:1px solid var(--b);border-radius:8px;padding:9px 11px;line-height:1.9;"></div>
+  </div>
+</div>
+
+<!-- ══ CHAT ══ -->
+<div class="pg" id="pg-chat">
+  <div class="msgs" id="msgs"></div>
+
+  <!-- Handmodus paneel -->
+  <div class="hpanel" id="hpanel" style="display:none">
+    <div class="tbox" id="tbox"></div>
+    <div class="rbtn off" id="rbtn">🎙️</div>
+    <div class="hstat" id="hstat">Even geduld...</div>
+    <div class="hhint" id="hhint"></div>
+    <div class="brow">
+      <button class="btn bg" onclick="goBack()">← Terug</button>
+      <button class="btn bg" onclick="clearChat()">Wis chat</button>
+    </div>
+  </div>
+
+  <!-- Rijmodus paneel -->
+  <div class="dpanel" id="dpanel" style="display:none">
+    <div class="dring idle" id="dring">
+      <div class="dico" id="dico">🚗</div>
+      <div class="dlbl" id="dlbl">WACHT</div>
+    </div>
+    <div class="dstat" id="dstat">Zeg "Start bericht" om te beginnen</div>
+    <div class="dsub" id="dsub">Of "Wissel sessie" / "Nieuwe sessie [naam]"</div>
+    <div class="cpills">
+      <div class="cp" id="cp1">Start bericht</div>
+      <div class="cp" id="cp2">Stop bericht</div>
+      <div class="cp" id="cp3">Wissel sessie</div>
+      <div class="cp" id="cp4">Nieuwe sessie</div>
+    </div>
+    <div class="brow">
+      <button class="btn bg" onclick="goBack()">← Terug</button>
+      <button class="btn bg" onclick="clearChat()">Wis chat</button>
     </div>
   </div>
 </div>
 
+</div><!-- #app -->
 <script>
-// ════════════════════════════════════════
-// CONSTANTEN
-// ════════════════════════════════════════
-const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
-const STORE = 'aivoice_v1';
+// ── STORE ──────────────────────────────────────────────────────
+const STORE = 'aivoice_v2';
+let D = {};
+try { D = JSON.parse(localStorage.getItem(STORE) || '{}'); } catch(e) { D = {}; }
+if (!D.sessions) D.sessions = [];
+if (!D.profiel)  D.profiel  = {};
+if (!D.mode)     D.mode     = 'hand';
+if (!D.ck)       D.ck       = '';
+if (!D.ok)       D.ok       = '';
 
-// Rijmodus spraakcommando's
-const CMD_START    = ['start bericht','start het bericht','begin bericht'];
-const CMD_STOP     = ['stop bericht','stop het bericht','einde bericht'];
-const CMD_SWITCH   = ['wissel sessie','andere sessie','verander sessie','volgende sessie','vorige sessie'];
-const CMD_NEW_SESS = ['nieuwe sessie']; // gevolgd door naam
-const CMD_CONFIRM  = ['ja','correct','klopt','goed','verwerk','bevestig','doe maar'];
-const CMD_RETRY    = ['nee','opnieuw','probeer opnieuw','niet goed','fout'];
-const CMD_QUIT     = ['stop assistent','afsluiten','terug naar menu'];
+function save() { try { localStorage.setItem(STORE, JSON.stringify(D)); } catch(e) {} }
 
-// ════════════════════════════════════════
-// STATE
-// ════════════════════════════════════════
-let state = JSON.parse(localStorage.getItem(STORE) || '{"sessions":[],"claudeKey":"","openaiKey":"","profiel":{},"mode":"hand"}');
-let sess = null;
-let isProcessing = false;
-let isSpeaking = false;
-let micStream = null;
-let mediaRecorder = null;
-let audioChunks = [];
-let isRecording = false;
-
-// Rijmodus state
-let driveListening = false;
-let driveRecording = false;
-let driveRec = null; // Web Speech voor commando's
-let driveConfirming = false;
-let drivePendingTranscript = '';
-let driveSwitching = false; // bezig met sessie wisselen
-
-const save = () => localStorage.setItem(STORE, JSON.stringify(state));
+// ── DOM helpers ────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-// ════════════════════════════════════════
-// DOM
-// ════════════════════════════════════════
-const claudeKeyEl = document.getElementById('api-claude');
-const openaiKeyEl = document.getElementById('api-openai');
-const sessListEl  = document.getElementById('sess-list');
-const newSessEl   = document.getElementById('new-sess-input');
-const btnAdd      = document.getElementById('btn-add');
-const btnStart    = document.getElementById('btn-start');
-const btnKenn     = document.getElementById('btn-kenn');
-const profielGrp  = document.getElementById('profiel-group');
-const profielBox  = document.getElementById('profiel-box');
-const messagesEl  = document.getElementById('messages');
-const modePill    = document.getElementById('mode-pill');
+// ── SETUP REFS ─────────────────────────────────────────────────
+const inClaude = $('in-claude');
+const inOpenai = $('in-openai');
+const inSess   = $('in-sess');
+const btnAdd   = $('btn-add');
+const btnStart = $('btn-start');
+const btnKenn  = $('btn-kenn');
+const hintEl   = $('hint-ready');
+const slistEl  = $('slist');
 
-// Hand paneel
-const handPanel    = document.getElementById('hand-panel');
-const recBtn       = document.getElementById('rec-btn');
-const handStatus   = document.getElementById('hand-status');
-const handHint     = document.getElementById('hand-hint');
-const transcriptBox= document.getElementById('transcript-box');
+// Herstel opgeslagen sleutels
+if (D.ck) inClaude.value = D.ck;
+if (D.ok) inOpenai.value = D.ok;
 
-// Drive paneel
-const drivePanel   = document.getElementById('drive-panel');
-const driveRing    = document.getElementById('drive-ring');
-const driveIcon    = document.getElementById('drive-icon');
-const driveLabel   = document.getElementById('drive-label');
-const driveStatus  = document.getElementById('drive-status');
-const driveSub     = document.getElementById('drive-sub');
+// ── SESSIE VARIABELE ───────────────────────────────────────────
+let curSess = null;
+// Herstel laatste sessie
+if (D.sessions.length > 0) curSess = D.sessions[D.sessions.length - 1];
 
-// Init sleutels
-if(state.claudeKey) claudeKeyEl.value = state.claudeKey;
-if(state.openaiKey) openaiKeyEl.value = state.openaiKey;
-claudeKeyEl.addEventListener('input', () => { state.claudeKey = claudeKeyEl.value.trim(); save(); checkReady(); });
-openaiKeyEl.addEventListener('input', () => { state.openaiKey = openaiKeyEl.value.trim(); save(); checkReady(); });
-// Ook bij blur opslaan (bijv. als autofill de waarde zet)
-claudeKeyEl.addEventListener('blur', () => { state.claudeKey = claudeKeyEl.value.trim(); save(); checkReady(); });
-openaiKeyEl.addEventListener('blur', () => { state.openaiKey = openaiKeyEl.value.trim(); save(); checkReady(); });
+// ── MODUS ──────────────────────────────────────────────────────
+let curMode = D.mode || 'hand';
 
-// ════════════════════════════════════════
-// MODUS KEUZE
-// ════════════════════════════════════════
-let selectedMode = state.mode || 'hand';
-
-function selectMode(m) {
-  selectedMode = m;
-  state.mode = m;
-  save();
-  document.getElementById('card-hand').className = 'mode-card' + (m==='hand' ? ' selected-hand' : '');
-  document.getElementById('card-drive').className = 'mode-card' + (m==='drive' ? ' selected-drive' : '');
-  checkReady();
+function pickMode(m) {
+  curMode = m; D.mode = m; save();
+  $('mc-hand').className  = 'mc' + (m === 'hand'  ? ' sel-h' : '');
+  $('mc-drive').className = 'mc' + (m === 'drive' ? ' sel-d' : '');
+  chk();
 }
-selectMode(selectedMode);
+pickMode(curMode);
 
-// ════════════════════════════════════════
-// SESSIES
-// ════════════════════════════════════════
+// ── CHECK READY ────────────────────────────────────────────────
+function chk() {
+  const ck = inClaude.value.trim();
+  const ok = inOpenai.value.trim();
+  const rdy = !!(ck && ok && curSess);
+  btnStart.disabled = !rdy;
+  if (!ck)      { hintEl.textContent = '⚠️ Voer je Anthropic (Claude) sleutel in'; hintEl.className='hint'; }
+  else if (!ok) { hintEl.textContent = '⚠️ Voer je OpenAI (Whisper) sleutel in';   hintEl.className='hint'; }
+  else if (!curSess) { hintEl.textContent = '⚠️ Typ een naam en druk op + om een sessie aan te maken'; hintEl.className='hint'; }
+  else          { hintEl.textContent = '✅ Klaar om te starten!'; hintEl.className='hint ok'; }
+}
+
+inClaude.addEventListener('input', () => { D.ck = inClaude.value.trim(); save(); chk(); });
+inOpenai.addEventListener('input', () => { D.ok = inOpenai.value.trim(); save(); chk(); });
+inClaude.addEventListener('blur',  () => { D.ck = inClaude.value.trim(); save(); chk(); });
+inOpenai.addEventListener('blur',  () => { D.ok = inOpenai.value.trim(); save(); chk(); });
+
+// ── SESSIES ────────────────────────────────────────────────────
 function renderSessions() {
-  if (!state.sessions.length) {
-    sessListEl.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:6px 0;">Nog geen sessies. Maak er een aan.</div>';
+  if (!D.sessions.length) {
+    slistEl.innerHTML = '<div style="font-size:12px;color:var(--t3);padding:6px 0;">Nog geen sessies — maak er een aan hieronder.</div>';
     return;
   }
-  sessListEl.innerHTML = '';
-  [...state.sessions].reverse().forEach(s => {
+  slistEl.innerHTML = '';
+  [...D.sessions].reverse().forEach(s => {
+    const n = (s.messages || []).filter(m => m.role === 'user').length;
     const d = document.createElement('div');
-    d.className = 'sess-item' + (sess?.id === s.id ? ' selected' : '');
-    const n = s.messages.filter(m => m.role === 'user').length;
-    d.innerHTML = `<div><div class="sess-name">${esc(s.name)}</div><div class="sess-meta">${n} berichten · ${new Date(s.id).toLocaleDateString('nl-NL')}</div></div><button class="sess-del">✕</button>`;
+    d.className = 'si' + (curSess && curSess.id === s.id ? ' sel' : '');
+    d.innerHTML = `<div><div class="si-n">${esc(s.name)}</div><div class="si-m">${n} berichten · ${new Date(s.id).toLocaleDateString('nl-NL')}</div></div><button class="si-del" data-id="${s.id}">✕</button>`;
     d.addEventListener('click', e => {
-      if (e.target.classList.contains('sess-del')) return;
-      sess = s; renderSessions(); checkReady();
+      if (e.target.dataset.id) {
+        D.sessions = D.sessions.filter(x => x.id != e.target.dataset.id);
+        if (curSess && curSess.id == e.target.dataset.id) curSess = D.sessions.length ? D.sessions[D.sessions.length-1] : null;
+        save(); renderSessions(); chk();
+      } else {
+        curSess = s; renderSessions(); chk();
+      }
     });
-    d.querySelector('.sess-del').addEventListener('click', e => {
-      e.stopPropagation();
-      state.sessions = state.sessions.filter(x => x.id !== s.id);
-      if (sess?.id === s.id) sess = null;
-      save(); renderSessions(); checkReady();
-    });
-    sessListEl.appendChild(d);
+    slistEl.appendChild(d);
   });
 }
 
-function createSession(name, isKenn = false) {
-  const s = { id: Date.now(), name, messages: [], isKennismaking: isKenn };
-  state.sessions.push(s);
-  sess = s;
+function makeSession(name, isKenn) {
+  const s = { id: Date.now(), name: name, messages: [], isKennismaking: !!isKenn };
+  D.sessions.push(s);
+  curSess = s;
   save();
   renderSessions();
-  checkReady();
+  chk();
   return s;
 }
 
-// Auto-select last used session on load
-function autoSelectLastSession() {
-  if (!sess && state.sessions.length > 0) {
-    sess = state.sessions[state.sessions.length - 1];
-    renderSessions();
-    checkReady();
-  }
-}
-
-function renderProfiel() {
-  const entries = Object.entries(state.profiel);
-  if (!entries.length) { profielGrp.style.display = 'none'; return; }
-  profielGrp.style.display = 'flex';
-  profielBox.style.display = 'block';
-  profielBox.innerHTML = entries.map(([k,v]) => `<b>${esc(k)}:</b> ${esc(v)}`).join('<br>');
-}
-
-const checkReady = () => {
-  // Lees direct uit velden zodat het werkt ook als state nog niet bijgewerkt is
-  const hasClaudeKey = (claudeKeyEl.value.trim() || state.claudeKey);
-  const hasOpenaiKey = (openaiKeyEl.value.trim() || state.openaiKey);
-  const ready = !!(hasClaudeKey && hasOpenaiKey && sess);
-  btnStart.disabled = !ready;
-  updateReadyHint();
-};
-
-function updateReadyHint() {
-  const hint = document.getElementById('ready-hint');
-  if (!hint) return;
-  const hasClaudeKey = (claudeKeyEl.value.trim() || state.claudeKey);
-  const hasOpenaiKey = (openaiKeyEl.value.trim() || state.openaiKey);
-  if (!hasClaudeKey) { hint.textContent = '⚠️ Voer je Anthropic (Claude) API-sleutel in'; hint.style.color='var(--amber)'; return; }
-  if (!hasOpenaiKey) { hint.textContent = '⚠️ Voer je OpenAI (Whisper) API-sleutel in'; hint.style.color='var(--amber)'; return; }
-  if (!sess) { hint.textContent = '⚠️ Typ een naam en druk op + om een sessie aan te maken'; hint.style.color='var(--amber)'; return; }
-  hint.textContent = '✅ Klaar om te starten!';
-  hint.style.color = 'var(--green)';
-}
-
 btnAdd.addEventListener('click', () => {
-  const name = newSessEl.value.trim() || 'Idee ' + (state.sessions.length + 1);
-  createSession(name);
-  newSessEl.value = '';
-  updateReadyHint();
+  const name = inSess.value.trim();
+  if (!name) { inSess.focus(); inSess.placeholder = 'Typ eerst een naam!'; return; }
+  makeSession(name, false);
+  inSess.value = '';
+  inSess.placeholder = 'Geef je sessie een naam...';
 });
-newSessEl.addEventListener('keydown', e => { if (e.key === 'Enter') btnAdd.click(); });
+inSess.addEventListener('keydown', e => { if (e.key === 'Enter') btnAdd.click(); });
 
 btnStart.addEventListener('click', () => {
-  state.claudeKey = claudeKeyEl.value.trim();
-  state.openaiKey = openaiKeyEl.value.trim();
+  D.ck = inClaude.value.trim();
+  D.ok = inOpenai.value.trim();
   save();
-  if (!state.claudeKey || !state.openaiKey || !sess) {
-    checkReady();
-    return;
-  }
-  startChat();
+  if (!D.ck || !D.ok || !curSess) { chk(); return; }
+  openChat(false);
 });
 
 btnKenn.addEventListener('click', () => {
-  if (!state.claudeKey || !state.openaiKey) { alert('Voer beide API-sleutels in.'); return; }
-  createSession('🤝 Kennismaking', true);
-  state.claudeKey = claudeKeyEl.value.trim();
-  state.openaiKey = openaiKeyEl.value.trim();
+  D.ck = inClaude.value.trim();
+  D.ok = inOpenai.value.trim();
+  if (!D.ck || !D.ok) { alert('Vul eerst beide API-sleutels in.'); return; }
   save();
-  startChat(true);
+  makeSession('🤝 Kennismaking', true);
+  openChat(true);
 });
 
-document.getElementById('btn-back-hand').addEventListener('click', () => { stopAll(); showScreen('setup'); renderSessions(); renderProfiel(); });
-document.getElementById('btn-back-drive').addEventListener('click', () => { stopAll(); showScreen('setup'); renderSessions(); renderProfiel(); });
-document.getElementById('btn-clear-hand').addEventListener('click', () => { if(sess){sess.messages=[];save();renderMessages();} });
-document.getElementById('btn-clear-drive').addEventListener('click', () => { if(sess){sess.messages=[];save();renderMessages();} });
-
-// ════════════════════════════════════════
-// SCHERMEN
-// ════════════════════════════════════════
-function showScreen(id) {
-  document.getElementById('setup').classList.toggle('active', id === 'setup');
-  document.getElementById('chat').classList.toggle('active', id === 'chat');
+// ── PROFIEL ────────────────────────────────────────────────────
+function renderProfiel() {
+  const entries = Object.entries(D.profiel);
+  if (!entries.length) { $('profiel-wrap').style.display = 'none'; return; }
+  $('profiel-wrap').style.display = 'flex';
+  $('profiel-box').innerHTML = entries.map(([k,v]) => `<b>${esc(k)}:</b> ${esc(v)}`).join('<br>');
 }
 
-async function startChat(isKenn = false) {
-  const hdrSess = document.createElement('div'); // update session chip in header
-  showScreen('chat');
-  renderMessages();
-  updateHeader();
-
-  if (selectedMode === 'hand') {
-    handPanel.style.display = 'flex';
-    drivePanel.style.display = 'none';
-    modePill.className = 'mode-pill hand';
-    modePill.textContent = '📱 Hand';
-    await initMic();
-    if (isKenn) setTimeout(() => processInput('[START]'), 600);
-  } else {
-    drivePanel.style.display = 'flex';
-    handPanel.style.display = 'none';
-    modePill.className = 'mode-pill drive';
-    modePill.textContent = '🚗 Rij';
-    setDriveState('idle');
-    if (isKenn) {
-      await initMic();
-      setTimeout(() => processInput('[START]'), 600);
-    } else {
-      startDriveListening();
-    }
-  }
+// ── NAVIGATIE ──────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  $(id).classList.add('on');
 }
 
-function updateHeader() {
-  const chip = document.querySelector('.session-chip') || (() => {
-    const c = document.createElement('div');
-    c.className = 'session-chip';
-    document.querySelector('.header').appendChild(c);
-    return c;
-  })();
-  // Update existing chip
-  const existing = document.querySelector('#hdr-sess');
-  // Use modePill area to show session name instead
+function goBack() {
+  stopAll();
+  showPage('pg-setup');
+  renderSessions();
+  renderProfiel();
+  chk();
 }
 
-// ════════════════════════════════════════
-// BERICHTEN
-// ════════════════════════════════════════
-function renderMessages() {
-  messagesEl.innerHTML = '';
-  const mode = selectedMode;
-  if (!sess?.messages.length) {
-    messagesEl.innerHTML = mode === 'drive'
-      ? '<div class="empty-state"><div class="empty-icon">🚗</div><div class="empty-text">Zeg "Start bericht" om te beginnen.<br>Volledig handsfree.</div></div>'
-      : '<div class="empty-state"><div class="empty-icon">🎙️</div><div class="empty-text">Houd de knop ingedrukt en spreek.<br>Laat los als je klaar bent.</div></div>';
+function clearChat() {
+  if (curSess) { curSess.messages = []; save(); renderMsgs(); }
+}
+
+// ── BERICHTEN ──────────────────────────────────────────────────
+const msgsEl = $('msgs');
+
+function renderMsgs() {
+  msgsEl.innerHTML = '';
+  if (!curSess || !curSess.messages.length) {
+    msgsEl.innerHTML = curMode === 'drive'
+      ? '<div class="empty"><div class="empty-ico">🚗</div><div class="empty-t">Zeg "Start bericht"<br>om te beginnen</div></div>'
+      : '<div class="empty"><div class="empty-ico">🎙️</div><div class="empty-t">Houd de knop ingedrukt<br>en spreek. Laat los als je klaar bent.</div></div>';
     return;
   }
-  sess.messages.forEach(m => addMsg(m.role, m.content, false));
+  curSess.messages.forEach(m => addMsg(m.role, m.content, false));
 }
 
-function addMsg(role, text, anim = true) {
-  messagesEl.querySelectorAll('.empty-state').forEach(e => e.remove());
+function addMsg(role, text, anim) {
+  msgsEl.querySelectorAll('.empty').forEach(e => e.remove());
   const d = document.createElement('div');
   d.className = 'msg ' + role;
-  if (!anim) d.style.animation = 'none';
+  if (anim === false) d.style.animation = 'none';
   d.textContent = text;
-  messagesEl.appendChild(d);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
+  msgsEl.appendChild(d);
+  msgsEl.scrollTop = msgsEl.scrollHeight;
 }
 
-function addDriveCmd(text) {
+function addCmd(text) {
+  msgsEl.querySelectorAll('.empty').forEach(e => e.remove());
   const d = document.createElement('div');
-  d.className = 'msg drive-cmd';
+  d.className = 'msg cmd';
   d.textContent = '🗣 ' + text;
-  messagesEl.querySelectorAll('.empty-state').forEach(e => e.remove());
-  messagesEl.appendChild(d);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
+  msgsEl.appendChild(d);
+  msgsEl.scrollTop = msgsEl.scrollHeight;
 }
 
-// ════════════════════════════════════════
-// MIC INIT (voor handmodus + Whisper)
-// ════════════════════════════════════════
-async function initMic() {
-  setHandState('disabled');
-  handStatus.textContent = 'Microfoon initialiseren...';
-  handHint.textContent = 'Even geduld';
-  try {
-    micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-    setHandState('ready');
-    handStatus.textContent = 'Houd de knop ingedrukt om te spreken';
-    handHint.textContent = 'Laat los als je klaar bent — Whisper herkent je stem';
-  } catch(err) {
-    setHandState('disabled');
-    handStatus.textContent = 'Microfoon geweigerd: ' + err.message;
-  }
-}
+// ── CHAT OPENEN ────────────────────────────────────────────────
+let micStream = null;
 
-// ════════════════════════════════════════
-// HANDMODUS
-// ════════════════════════════════════════
-function setHandState(s) {
-  recBtn.className = 'rec-btn ' + s;
-  const icons = { ready:'🎙️', recording:'⏹️', processing:'⏳', speaking:'🔊', disabled:'🎙️' };
-  recBtn.textContent = icons[s] || '🎙️';
-}
+async function openChat(isKenn) {
+  $('hdr-sess').textContent = curSess ? curSess.name : '—';
+  showPage('pg-chat');
+  renderMsgs();
 
-recBtn.addEventListener('pointerdown', e => { e.preventDefault(); if(!isProcessing && !isSpeaking && !isRecording) startRecording(); });
-recBtn.addEventListener('pointerup', e => { e.preventDefault(); if(isRecording) stopRecording(); });
-recBtn.addEventListener('pointerleave', e => { if(isRecording) stopRecording(); });
-recBtn.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
-recBtn.addEventListener('touchend', e => { e.preventDefault(); if(isRecording) stopRecording(); }, { passive: false });
-
-function startRecording() {
-  if (!micStream) return;
-  audioChunks = [];
-  const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus'
-    : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg';
-  mediaRecorder = new MediaRecorder(micStream, { mimeType });
-  mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
-  mediaRecorder.onstop = () => handleRecordingDone();
-  mediaRecorder.start(100);
-  isRecording = true;
-  setHandState('recording');
-  handStatus.textContent = 'Opname bezig...';
-  handHint.textContent = 'Laat los als je klaar bent';
-  transcriptBox.classList.remove('visible');
-}
-
-function stopRecording() {
-  if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
-  isRecording = false;
-  mediaRecorder.stop();
-  setHandState('processing');
-  handStatus.textContent = 'Whisper verwerkt je spraak...';
-  handHint.textContent = '';
-}
-
-async function handleRecordingDone() {
-  const mimeType = audioChunks[0]?.type || 'audio/webm';
-  const blob = new Blob(audioChunks, { type: mimeType });
-  if (blob.size < 2000) {
-    setHandState('ready');
-    handStatus.textContent = 'Te kort — houd langer ingedrukt';
-    return;
-  }
-  try {
-    const transcript = await whisperTranscribe(blob, mimeType);
-    if (!transcript || transcript.trim().length < 2) {
-      setHandState('ready');
-      handStatus.textContent = 'Niets gehoord — probeer opnieuw';
-      return;
+  if (curMode === 'hand') {
+    $('hpanel').style.display = 'flex';
+    $('dpanel').style.display = 'none';
+    setH('off'); $('hstat').textContent = 'Microfoon starten...';
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      setH('ready');
+      $('hstat').textContent = 'Houd ingedrukt om te spreken';
+      $('hhint').textContent = 'Laat los als je klaar bent — Whisper herkent je stem';
+      if (isKenn) setTimeout(() => claudeCall('[START]'), 500);
+    } catch(e) {
+      $('hstat').textContent = 'Microfoon geweigerd: ' + e.message;
     }
-    transcriptBox.textContent = '📝 "' + transcript + '"';
-    transcriptBox.classList.add('visible');
-    await processInput(transcript.trim());
-  } catch(err) {
-    setHandState('ready');
-    handStatus.textContent = 'Fout: ' + err.message;
+  } else {
+    $('hpanel').style.display = 'none';
+    $('dpanel').style.display = 'flex';
+    setD('idle', '🚗', 'WACHT');
+    $('dstat').textContent = 'Zeg "Start bericht" om te beginnen';
+    $('dsub').textContent  = 'Of "Wissel sessie" / "Nieuwe sessie [naam]"';
+    if (isKenn) {
+      try { micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch(e) {}
+      setTimeout(() => claudeCall('[START]'), 500);
+    } else {
+      driveStart();
+    }
   }
 }
 
-// ════════════════════════════════════════
-// RIJMODUS — VOLLEDIG SPRAAKGESTUURD
-// ════════════════════════════════════════
-function setDriveState(s) {
-  driveRing.className = 'drive-status-ring ' + s;
-  const icons = { idle:'🚗', listening:'👂', recording:'🔴', processing:'⏳', speaking:'🔊', confirm:'❓', session:'📂' };
-  const labels = { idle:'WACHT', listening:'LUISTERT', recording:'OPNAME', processing:'DENKT', speaking:'ANTWOORDT', confirm:'BEVESTIG', session:'SESSIE' };
-  driveIcon.textContent = icons[s] || '🚗';
-  driveLabel.textContent = labels[s] || '';
+// ── HANDMODUS ──────────────────────────────────────────────────
+let mr = null, chunks = [], isRec = false, isProc = false, isSpk = false;
+const rbtn = $('rbtn');
 
-  // Highlight actief commando
-  document.querySelectorAll('.cmd-pill').forEach(p => p.classList.remove('active'));
-  if (s === 'listening') document.getElementById('cmd-start').classList.add('active');
-  if (s === 'recording') document.getElementById('cmd-stop').classList.add('active');
-  if (s === 'session') {
-    document.getElementById('cmd-switch').classList.add('active');
-    document.getElementById('cmd-new').classList.add('active');
+function setH(s) {
+  rbtn.className = 'rbtn ' + s;
+  rbtn.textContent = {ready:'🎙️',rec:'⏹️',proc:'⏳',spk:'🔊',off:'🎙️'}[s] || '🎙️';
+}
+
+rbtn.addEventListener('pointerdown', e => { e.preventDefault(); if (!isRec && !isProc && !isSpk) recStart(); });
+rbtn.addEventListener('pointerup',   e => { e.preventDefault(); if (isRec) recStop(); });
+rbtn.addEventListener('pointerleave',e => { if (isRec) recStop(); });
+rbtn.addEventListener('touchstart',  e => e.preventDefault(), { passive: false });
+rbtn.addEventListener('touchend',    e => { e.preventDefault(); if (isRec) recStop(); }, { passive: false });
+
+function recStart() {
+  if (!micStream) return;
+  chunks = [];
+  const mime = ['audio/webm;codecs=opus','audio/webm','audio/ogg'].find(t => MediaRecorder.isTypeSupported(t));
+  mr = new MediaRecorder(micStream, { mimeType: mime });
+  mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+  mr.onstop = () => recDone();
+  mr.start(100); isRec = true;
+  setH('rec'); $('hstat').textContent = 'Opname...'; $('tbox').classList.remove('on');
+}
+
+function recStop() {
+  if (!mr || mr.state === 'inactive') return;
+  isRec = false; mr.stop();
+  setH('proc'); $('hstat').textContent = 'Whisper verwerkt...';
+}
+
+async function recDone() {
+  const mime = chunks[0]?.type || 'audio/webm';
+  const blob = new Blob(chunks, { type: mime });
+  if (blob.size < 2000) { setH('ready'); $('hstat').textContent = 'Te kort — houd langer ingedrukt'; return; }
+  try {
+    const t = await whisper(blob, mime);
+    if (!t || t.trim().length < 2) { setH('ready'); $('hstat').textContent = 'Niets gehoord — probeer opnieuw'; return; }
+    $('tbox').textContent = '📝 "' + t + '"'; $('tbox').classList.add('on');
+    await claudeCall(t.trim());
+  } catch(e) {
+    setH('ready'); $('hstat').textContent = 'Fout: ' + e.message;
   }
 }
 
-function startDriveListening() {
+// ── RIJMODUS ───────────────────────────────────────────────────
+let dRec = null, dOn = false, dRecOn = false, dConf = false, dPend = '';
+
+const CMD_START  = ['start bericht','start het bericht','begin bericht'];
+const CMD_STOP   = ['stop bericht','stop het bericht','einde bericht'];
+const CMD_SWITCH = ['wissel sessie','andere sessie','verander sessie'];
+const CMD_NEW    = ['nieuwe sessie'];
+const CMD_YES    = ['ja','correct','klopt','goed','verwerk','bevestig','doe maar'];
+const CMD_NO     = ['nee','opnieuw','niet goed','fout'];
+const CMD_QUIT   = ['stop assistent','terug naar menu','afsluiten'];
+
+function setD(ring, ico, lbl) {
+  $('dring').className = 'dring ' + ring;
+  $('dico').textContent = ico;
+  $('dlbl').textContent = lbl;
+  ['cp1','cp2','cp3','cp4'].forEach(id => $('cp'+id.slice(2)).classList.remove('on'));
+  if (ring==='listen') $('cp1').classList.add('on');
+  if (ring==='rec')    $('cp2').classList.add('on');
+  if (ring==='conf')   { $('cp1').classList.add('on'); }
+}
+
+function driveStart() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    driveStatus.textContent = 'Spraakherkenning niet beschikbaar. Gebruik Chrome.';
-    return;
-  }
-  driveListening = true;
-  driveRec = new SR();
-  driveRec.lang = 'nl-NL';
-  driveRec.continuous = true;
-  driveRec.interimResults = false;
-
-  driveRec.onstart = () => {
-    setDriveState('listening');
-    driveStatus.textContent = 'Zeg "Start bericht" om te beginnen';
-    driveSub.textContent = 'Of "Wissel sessie" / "Nieuwe sessie [naam]"';
-  };
-
-  driveRec.onresult = e => {
+  if (!SR) { $('dstat').textContent = 'Gebruik Chrome voor rijmodus.'; return; }
+  dOn = true;
+  dRec = new SR(); dRec.lang = 'nl-NL'; dRec.continuous = true; dRec.interimResults = false;
+  dRec.onstart = () => { setD('listen','👂','LUISTERT'); $('dstat').textContent = 'Zeg "Start bericht"'; $('dsub').textContent = 'Of "Wissel sessie" / "Nieuwe sessie [naam]"'; };
+  dRec.onresult = e => {
     const idx = e.results.length - 1;
     if (!e.results[idx].isFinal) return;
     const raw = e.results[idx][0].transcript.trim();
-    const t = raw.toLowerCase();
-    handleDriveCommand(t, raw);
+    driveCmd(raw.toLowerCase(), raw);
   };
-
-  driveRec.onerror = e => {
-    if (e.error === 'not-allowed') {
-      driveStatus.textContent = 'Microfoon geweigerd — geef toegang in Chrome';
-      return;
-    }
-    if (driveListening && !driveRecording && !isProcessing) {
-      setTimeout(() => startDriveListening(), 800);
-    }
-  };
-
-  driveRec.onend = () => {
-    if (driveListening && !driveRecording && !isProcessing && !isSpeaking) {
-      setTimeout(() => startDriveListening(), 400);
-    }
-  };
-
-  try { driveRec.start(); } catch(e) {}
+  dRec.onerror = e => { if (e.error !== 'not-allowed' && dOn) setTimeout(driveStart, 800); };
+  dRec.onend   = () => { if (dOn && !dRecOn && !isProc && !isSpk) setTimeout(driveStart, 400); };
+  try { dRec.start(); } catch(e) {}
 }
 
-function stopDriveListening() {
-  driveListening = false;
-  if (driveRec) { try { driveRec.abort(); } catch(e) {} driveRec = null; }
-}
+function driveStop() { dOn = false; if (dRec) { try { dRec.abort(); } catch(e) {} dRec = null; } }
 
-async function handleDriveCommand(t, raw) {
-  // ── Bevestiging na transcript voorlezen ──
-  if (driveConfirming) {
-    if (CMD_CONFIRM.some(w => t.includes(w))) {
-      driveConfirming = false;
-      addDriveCmd('✅ Bevestigd');
-      await processInput(drivePendingTranscript);
-    } else if (CMD_RETRY.some(w => t.includes(w))) {
-      driveConfirming = false;
-      drivePendingTranscript = '';
-      setDriveState('listening');
-      driveStatus.textContent = 'Oké, probeer opnieuw. Zeg "Start bericht".';
-      driveSub.textContent = '';
-      speak('Oké, probeer het opnieuw.', null, true);
-    }
+async function driveCmd(t, raw) {
+  if (dConf) {
+    if (CMD_YES.some(w => t.includes(w))) { dConf = false; addCmd('✅ Bevestigd'); claudeCall(dPend); }
+    else if (CMD_NO.some(w => t.includes(w))) { dConf = false; dPend = ''; say('Oké, probeer opnieuw. Zeg start bericht.', driveStart); }
     return;
   }
-
-  // ── Sessie wisselen ──
+  if (CMD_QUIT.some(w => t.includes(w))) { goBack(); return; }
   if (CMD_SWITCH.some(w => t.includes(w))) {
-    driveSwitching = true;
-    setDriveState('session');
-    addDriveCmd('Sessie wisselen');
-    const list = state.sessions.map((s, i) => `${i+1}: ${s.name}`).join(', ');
-    const msg = state.sessions.length
-      ? `Je hebt ${state.sessions.length} sessies: ${list}. Welke wil je? Zeg het nummer of de naam.`
-      : 'Je hebt nog geen sessies. Zeg "Nieuwe sessie" gevolgd door een naam.';
-    driveStatus.textContent = 'Welke sessie?';
-    driveSub.textContent = 'Zeg het nummer of de naam';
-    speak(msg, () => listenForSessionChoice(), true);
+    addCmd('Sessie wisselen');
+    const list = D.sessions.length ? D.sessions.map((s,i)=>`${i+1}: ${s.name}`).join(', ') : 'Geen sessies.';
+    setD('conf','📂','SESSIE');
+    $('dstat').textContent = 'Welke sessie?';
+    $('dsub').textContent  = 'Zeg het nummer of de naam';
+    say('Je hebt ' + D.sessions.length + ' sessies: ' + list + '. Welke wil je?', listenSessChoice);
     return;
   }
-
-  // ── Nieuwe sessie aanmaken ──
-  const newSessMatch = CMD_NEW_SESS.find(w => t.includes(w));
-  if (newSessMatch) {
-    let name = raw.replace(new RegExp(newSessMatch, 'gi'), '').trim();
-    if (!name) name = 'Idee ' + (state.sessions.length + 1);
-    createSession(name);
-    addDriveCmd('Nieuwe sessie: ' + name);
-    setDriveState('session');
-    driveStatus.textContent = 'Sessie aangemaakt: ' + name;
-    speak(`Nieuwe sessie "${name}" aangemaakt. Zeg "Start bericht" om te beginnen.`, null, true);
+  const nw = CMD_NEW.find(w => t.includes(w));
+  if (nw) {
+    let name = raw.replace(new RegExp(nw, 'gi'), '').trim() || ('Idee ' + (D.sessions.length+1));
+    makeSession(name, false);
+    addCmd('Nieuwe sessie: ' + name);
+    say('Sessie ' + name + ' aangemaakt. Zeg start bericht om te beginnen.', driveStart);
     return;
   }
-
-  // ── Stoppen / terug ──
-  if (CMD_QUIT.some(w => t.includes(w))) {
-    stopAll();
-    showScreen('setup');
-    renderSessions();
-    return;
-  }
-
-  // ── Start opname ──
-  if (!driveRecording && CMD_START.some(w => t.includes(w))) {
-    if (!sess) {
-      speak('Kies eerst een sessie. Zeg "Nieuwe sessie" gevolgd door een naam.', null, true);
-      return;
-    }
-    addDriveCmd('Start bericht');
-    await startDriveRecording();
-    return;
+  if (!dRecOn && CMD_START.some(w => t.includes(w))) {
+    if (!curSess) { say('Maak eerst een sessie aan.', driveStart); return; }
+    addCmd('Start bericht');
+    driveStop();
+    await driveRecord();
   }
 }
 
-async function startDriveRecording() {
-  // Stop de continue luisteraar tijdelijk
-  stopDriveListening();
-
+async function driveRecord() {
+  dRecOn = true;
   try {
-    if (!micStream) {
-      micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-    }
-  } catch(err) {
-    driveStatus.textContent = 'Microfoon geweigerd: ' + err.message;
-    speak('Microfoon kon niet worden geopend.', () => startDriveListening(), true);
-    return;
-  }
-
-  audioChunks = [];
-  const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus'
-    : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg';
-
-  mediaRecorder = new MediaRecorder(micStream, { mimeType });
-  mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
-  mediaRecorder.onstop = () => handleDriveRecordingDone();
-  mediaRecorder.start(100);
-  driveRecording = true;
-
-  setDriveState('recording');
-  driveStatus.textContent = 'Opname bezig...';
-  driveSub.textContent = 'Zeg "Stop bericht" als je klaar bent';
-
-  speak('Ga je gang.', () => {
-    // Na bevestiging: start Web Speech om "Stop bericht" te detecteren
-    listenForStopCommand();
-  }, true);
+    if (!micStream) micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch(e) { say('Microfoon geweigerd.', driveStart); dRecOn=false; return; }
+  chunks = [];
+  const mime = ['audio/webm;codecs=opus','audio/webm','audio/ogg'].find(t => MediaRecorder.isTypeSupported(t));
+  mr = new MediaRecorder(micStream, { mimeType: mime });
+  mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+  mr.onstop = () => driveRecDone();
+  mr.start(100);
+  setD('rec','🔴','OPNAME'); $('dstat').textContent = 'Opname bezig...'; $('dsub').textContent = 'Zeg "Stop bericht" als je klaar bent';
+  say('Ga je gang.', listenStop);
 }
 
-function listenForStopCommand() {
+function listenStop() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    // Fallback: automatisch stoppen na 30 seconden
-    setTimeout(() => stopDriveRecording(), 30000);
-    return;
-  }
-  const r = new SR();
-  r.lang = 'nl-NL'; r.continuous = true; r.interimResults = false;
+  if (!SR) { setTimeout(driveRecStop, 30000); return; }
+  const r = new SR(); r.lang='nl-NL'; r.continuous=true; r.interimResults=false;
   r.onresult = e => {
-    const idx = e.results.length - 1;
-    if (!e.results[idx].isFinal) return;
-    const t = e.results[idx][0].transcript.toLowerCase().trim();
-    if (CMD_STOP.some(w => t.includes(w))) {
-      try { r.abort(); } catch(e) {}
-      addDriveCmd('Stop bericht');
-      stopDriveRecording();
-    }
+    const idx=e.results.length-1; if(!e.results[idx].isFinal) return;
+    const t=e.results[idx][0].transcript.toLowerCase();
+    if (CMD_STOP.some(w => t.includes(w))) { try{r.abort();}catch(e){} addCmd('Stop bericht'); driveRecStop(); }
   };
   r.onerror = () => {};
-  r.onend = () => { if (driveRecording) { try { r.start(); } catch(e) {} } };
+  r.onend = () => { if (dRecOn) { try{r.start();}catch(e){} } };
   try { r.start(); } catch(e) {}
 }
 
-function stopDriveRecording() {
-  if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
-  driveRecording = false;
-  mediaRecorder.stop();
-  setDriveState('processing');
-  driveStatus.textContent = 'Whisper verwerkt je stem...';
-  driveSub.textContent = '';
+function driveRecStop() {
+  if (!mr || mr.state === 'inactive') return;
+  dRecOn = false; mr.stop();
+  setD('proc','⏳','VERWERKT'); $('dstat').textContent = 'Whisper verwerkt...'; $('dsub').textContent = '';
 }
 
-async function handleDriveRecordingDone() {
-  const mimeType = audioChunks[0]?.type || 'audio/webm';
-  const blob = new Blob(audioChunks, { type: mimeType });
-
-  if (blob.size < 2000) {
-    setDriveState('listening');
-    driveStatus.textContent = 'Niets gehoord. Zeg "Start bericht" om opnieuw te proberen.';
-    speak('Ik heb niets gehoord. Zeg start bericht om opnieuw te proberen.', () => startDriveListening(), true);
-    return;
-  }
-
+async function driveRecDone() {
+  const mime = chunks[0]?.type || 'audio/webm';
+  const blob = new Blob(chunks, { type: mime });
+  if (blob.size < 2000) { say('Niets gehoord. Zeg start bericht.', driveStart); return; }
   try {
-    const transcript = await whisperTranscribe(blob, mimeType);
-    if (!transcript || transcript.trim().length < 2) {
-      speak('Ik kon je niet verstaan. Probeer het opnieuw.', () => startDriveListening(), true);
-      return;
-    }
-
-    drivePendingTranscript = transcript.trim();
-
-    // Lees transcript voor ter bevestiging
-    driveConfirming = true;
-    setDriveState('confirm');
-    driveStatus.textContent = 'Bevestig jouw bericht';
-    driveSub.textContent = 'Zeg "ja" of "opnieuw"';
-    speak(`Ik heb gehoord: "${transcript}". Klopt dit? Zeg ja of opnieuw.`, () => {
-      // Na voorlezen: luister naar bevestiging via continue SR
-      listenForConfirmation();
-    }, true);
-
-  } catch(err) {
-    speak('Er is een fout opgetreden. Zeg start bericht om opnieuw te proberen.', () => startDriveListening(), true);
-  }
+    const t = await whisper(blob, mime);
+    if (!t || t.trim().length < 2) { say('Kon je niet verstaan. Probeer opnieuw.', driveStart); return; }
+    dPend = t.trim(); dConf = true;
+    setD('conf','❓','BEVESTIG'); $('dstat').textContent = 'Klopt dit?'; $('dsub').textContent = 'Zeg "ja" of "opnieuw"';
+    say('Ik heb gehoord: ' + t + '. Klopt dit? Zeg ja of opnieuw.', listenConf);
+  } catch(e) { say('Fout bij verwerken. Zeg start bericht.', driveStart); }
 }
 
-function listenForConfirmation() {
+function listenConf() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return;
-  const r = new SR();
-  r.lang = 'nl-NL'; r.continuous = false; r.interimResults = false;
+  const r = new SR(); r.lang='nl-NL'; r.continuous=false; r.interimResults=false;
   r.onresult = e => {
-    const t = e.results[0][0].transcript.toLowerCase().trim();
-    if (CMD_CONFIRM.some(w => t.includes(w))) {
-      driveConfirming = false;
-      addDriveCmd('✅ ' + t);
-      processInput(drivePendingTranscript);
-    } else {
-      driveConfirming = false;
-      drivePendingTranscript = '';
-      speak('Oké, probeer opnieuw. Zeg start bericht.', () => startDriveListening(), true);
-    }
+    const t=e.results[0][0].transcript.toLowerCase().trim();
+    if (CMD_YES.some(w=>t.includes(w))) { dConf=false; addCmd('✅ '+t); claudeCall(dPend); }
+    else { dConf=false; dPend=''; say('Oké, probeer opnieuw.', driveStart); }
   };
-  r.onerror = () => { if (driveConfirming) setTimeout(() => listenForConfirmation(), 500); };
+  r.onerror = () => { if(dConf) setTimeout(listenConf,500); };
   r.onend = () => {};
   try { r.start(); } catch(e) {}
 }
 
-function listenForSessionChoice() {
+function listenSessChoice() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return;
-  const r = new SR();
-  r.lang = 'nl-NL'; r.continuous = false; r.interimResults = false;
+  if (!SR) { driveStart(); return; }
+  const r = new SR(); r.lang='nl-NL'; r.continuous=false; r.interimResults=false;
   r.onresult = e => {
-    const raw = e.results[0][0].transcript.trim();
-    const t = raw.toLowerCase();
-    driveSwitching = false;
-
-    // Zoek op nummer
+    const raw=e.results[0][0].transcript.trim(), t=raw.toLowerCase();
     const num = parseInt(t);
-    if (!isNaN(num) && num >= 1 && num <= state.sessions.length) {
-      sess = state.sessions[state.sessions.length - num]; // reversed list
-      // Eigenlijk gewoon op index
-      const sorted = [...state.sessions].reverse();
-      sess = sorted[num - 1];
-      renderMessages();
-      speak(`Sessie "${sess.name}" geselecteerd. Zeg start bericht om te beginnen.`, () => startDriveListening(), true);
-      addDriveCmd('Sessie: ' + sess.name);
-      return;
-    }
-
-    // Zoek op naam (fuzzy)
-    const match = state.sessions.find(s => s.name.toLowerCase().includes(t) || t.includes(s.name.toLowerCase().split(' ')[0]));
-    if (match) {
-      sess = match;
-      renderMessages();
-      speak(`Sessie "${sess.name}" geselecteerd. Zeg start bericht om te beginnen.`, () => startDriveListening(), true);
-      addDriveCmd('Sessie: ' + sess.name);
+    if (!isNaN(num) && num>=1 && num<=D.sessions.length) {
+      curSess = [...D.sessions].reverse()[num-1];
     } else {
-      speak('Ik kon die sessie niet vinden. Zeg wissel sessie om opnieuw te proberen.', () => startDriveListening(), true);
+      curSess = D.sessions.find(s => s.name.toLowerCase().includes(t.split(' ')[0])) || curSess;
+    }
+    if (curSess) {
+      $('hdr-sess').textContent = curSess.name;
+      renderMsgs();
+      say('Sessie ' + curSess.name + ' geselecteerd.', driveStart);
+      addCmd('Sessie: ' + curSess.name);
+    } else {
+      say('Sessie niet gevonden.', driveStart);
     }
   };
-  r.onerror = () => startDriveListening();
+  r.onerror = () => driveStart();
   r.onend = () => {};
   try { r.start(); } catch(e) {}
 }
 
-// ════════════════════════════════════════
-// WHISPER TRANSCRIPTIE
-// ════════════════════════════════════════
-async function whisperTranscribe(blob, mimeType) {
-  const ext = mimeType.includes('ogg') ? 'ogg' : 'webm';
+// ── WHISPER ────────────────────────────────────────────────────
+async function whisper(blob, mime) {
+  const ext = mime.includes('ogg') ? 'ogg' : 'webm';
   const fd = new FormData();
-  fd.append('file', blob, 'opname.' + ext);
+  fd.append('file', blob, 'rec.' + ext);
   fd.append('model', 'whisper-1');
   fd.append('language', 'nl');
   fd.append('response_format', 'text');
-  const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + state.openaiKey },
-    body: fd
+  const r = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    method: 'POST', headers: { Authorization: 'Bearer ' + D.ok }, body: fd
   });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.error?.message || 'Whisper fout ' + res.status);
-  }
-  return await res.text();
+  if (!r.ok) { const e=await r.json(); throw new Error(e.error?.message||'Whisper '+r.status); }
+  return await r.text();
 }
 
-// ════════════════════════════════════════
-// TEKST-NAAR-SPRAAK
-// ════════════════════════════════════════
-function speak(text, cb, skipStateUpdate = false) {
+// ── TTS ────────────────────────────────────────────────────────
+function say(text, cb, noState) {
   window.speechSynthesis.cancel();
-  isSpeaking = true;
-  if (!skipStateUpdate) {
-    if (selectedMode === 'hand') setHandState('speaking');
-    else setDriveState('speaking');
+  isSpk = true;
+  if (!noState) {
+    if (curMode==='hand') setH('spk');
+    else setD('spk','🔊','SPREEKT');
   }
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = 'nl-NL'; utt.rate = 1.0; utt.pitch = 1.0;
-  const v = window.speechSynthesis.getVoices().find(v => v.lang.startsWith('nl'));
-  if (v) utt.voice = v;
-  utt.onend = utt.onerror = () => {
-    isSpeaking = false;
-    if (cb) cb();
-    else if (!skipStateUpdate) {
-      if (selectedMode === 'hand') {
-        setHandState('ready');
-        handStatus.textContent = 'Houd de knop ingedrukt om te spreken';
-        handHint.textContent = 'Laat los als je klaar bent';
-        transcriptBox.classList.remove('visible');
-      }
-    }
-  };
-  window.speechSynthesis.speak(utt);
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='nl-NL'; u.rate=1.0; u.pitch=1.0;
+  const v = window.speechSynthesis.getVoices().find(v=>v.lang.startsWith('nl'));
+  if (v) u.voice = v;
+  u.onend = u.onerror = () => { isSpk=false; if(cb) cb(); else { if(curMode==='hand'){setH('ready');$('hstat').textContent='Houd ingedrukt om te spreken';$('hhint').textContent='Laat los als je klaar bent';$('tbox').classList.remove('on');}  } };
+  window.speechSynthesis.speak(u);
 }
 
-// ════════════════════════════════════════
-// CLAUDE API
-// ════════════════════════════════════════
-async function processInput(rawText) {
-  isProcessing = true;
-  const isStart = rawText === '[START]';
-
-  if (selectedMode === 'hand') {
-    setHandState('processing');
-    handStatus.textContent = 'Claude denkt na...';
-  } else {
-    setDriveState('processing');
-    driveStatus.textContent = 'Claude denkt na...';
-    driveSub.textContent = '';
-  }
+// ── CLAUDE ─────────────────────────────────────────────────────
+async function claudeCall(text) {
+  isProc = true;
+  const isStart = text === '[START]';
+  if (curMode==='hand') { setH('proc'); $('hstat').textContent='Claude denkt na...'; }
+  else { setD('proc','⏳','CLAUDE'); $('dstat').textContent='Claude denkt na...'; $('dsub').textContent=''; }
 
   if (!isStart) {
-    sess.messages.push({ role: 'user', content: rawText });
-    addMsg('user', rawText);
+    curSess.messages.push({ role:'user', content:text });
+    addMsg('user', text);
     save();
   }
 
-  const profTekst = Object.keys(state.profiel).length
-    ? '\n\nBekende info over de gebruiker:\n' + Object.entries(state.profiel).map(([k,v]) => `- ${k}: ${v}`).join('\n')
-    : '';
+  const prof = Object.keys(D.profiel).length
+    ? '\n\nBekende info:\n' + Object.entries(D.profiel).map(([k,v])=>`- ${k}: ${v}`).join('\n') : '';
 
-  const sys = sess.isKennismaking
-    ? `Je bent een vriendelijke persoonlijke assistent. Je taak is de gebruiker goed leren kennen via een natuurlijk gesprek. Stel één gerichte persoonlijke vraag tegelijk over werk, hobby's, gezin, ambities, gewoontes, communicatiestijl. Stel doorvragende vervolgvragen. Spreek altijd vloeiend Nederlands. Geen opsommingstekens. Korte, gesproken antwoorden. Als de gebruiker [START] stuurt, stel je jezelf kort voor en stel je de eerste vraag.${profTekst}`
-    : `Je bent een slimme persoonlijke assistent. Spreek altijd vloeiend Nederlands. Je voert een natuurlijk gesprek. Antwoorden zijn kort en geschikt voor gesproken taal — maximaal 3 zinnen tenzij meer gevraagd. Geen opsommingstekens of opmaak. Je helpt met ideeën, plannen, vragen en taken. Huidige sessie: "${sess.name}".${profTekst}`;
-
-  const msgs = isStart ? [{ role: 'user', content: '[START]' }] : sess.messages;
+  const sys = curSess.isKennismaking
+    ? `Je bent een vriendelijke persoonlijke assistent. Leer de gebruiker kennen via een naturlijk gesprek. Stel één persoonlijke vraag tegelijk. Doorvraag op antwoorden. Vloeiend Nederlands. Geen bullets. Korte gesproken antwoorden. Bij [START]: stel jezelf voor en stel de eerste vraag.${prof}`
+    : `Je bent een slimme persoonlijke assistent. Vloeiend Nederlands. Kort en gesproken — max 3 zinnen. Geen bullets. Huidige sessie: "${curSess.name}".${prof}`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': state.claudeKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({ model: CLAUDE_MODEL, max_tokens: 350, system: sys, messages: msgs })
+      headers: { 'Content-Type':'application/json', 'x-api-key':D.ck, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:350, system:sys, messages: isStart?[{role:'user',content:'[START]'}]:curSess.messages })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
     const reply = data.content?.[0]?.text || 'Sorry, geen antwoord.';
-
-    sess.messages.push({ role: 'assistant', content: reply });
+    curSess.messages.push({ role:'assistant', content:reply });
     addMsg('assistant', reply);
     save();
-    if (sess.isKennismaking) updateProfiel(sess.messages);
-
-    isProcessing = false;
-
-    if (selectedMode === 'hand') {
-      speak(reply, () => {
-        setHandState('ready');
-        handStatus.textContent = 'Houd de knop ingedrukt om te spreken';
-        handHint.textContent = 'Laat los als je klaar bent';
-        transcriptBox.classList.remove('visible');
-      });
+    if (curSess.isKennismaking) updateProfiel();
+    isProc = false;
+    if (curMode==='hand') {
+      say(reply, () => { setH('ready'); $('hstat').textContent='Houd ingedrukt om te spreken'; $('hhint').textContent='Laat los als je klaar bent'; $('tbox').classList.remove('on'); });
     } else {
-      setDriveState('speaking');
-      driveStatus.textContent = 'Claude antwoordt...';
-      speak(reply, () => {
-        setDriveState('listening');
-        driveStatus.textContent = 'Zeg "Start bericht" om verder te gaan';
-        driveSub.textContent = 'Of "Wissel sessie" / "Nieuwe sessie [naam]"';
-        startDriveListening();
-      }, true);
+      say(reply, () => { setD('listen','👂','LUISTERT'); $('dstat').textContent='Zeg "Start bericht" om verder te gaan'; $('dsub').textContent='Of "Wissel sessie" / "Nieuwe sessie [naam]"'; driveStart(); }, true);
     }
-
-  } catch(err) {
-    addMsg('system', 'Fout: ' + (err.message || 'Controleer je API-sleutels.'));
-    isProcessing = false;
-    if (selectedMode === 'hand') {
-      setHandState('ready');
-      handStatus.textContent = 'Er ging iets mis. Probeer opnieuw.';
-    } else {
-      setDriveState('listening');
-      driveStatus.textContent = 'Fout opgetreden. Zeg "Start bericht" om opnieuw te proberen.';
-      speak('Er ging iets mis. Zeg start bericht om opnieuw te proberen.', () => startDriveListening(), true);
-    }
+  } catch(e) {
+    addMsg('sys', 'Fout: ' + (e.message||'Controleer je sleutels.'));
+    isProc = false;
+    if (curMode==='hand') { setH('ready'); $('hstat').textContent='Fout — probeer opnieuw.'; }
+    else { say('Er ging iets mis. Zeg start bericht om opnieuw te proberen.', driveStart, true); }
   }
 }
 
-// ════════════════════════════════════════
-// PROFIEL OPBOUWEN
-// ════════════════════════════════════════
-async function updateProfiel(msgs) {
+// ── PROFIEL ────────────────────────────────────────────────────
+async function updateProfiel() {
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': state.claudeKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({
-        model: CLAUDE_MODEL, max_tokens: 400,
-        system: 'Analyseer dit gesprek en extraheer feitelijke persoonlijke informatie over de gebruiker. Geef ALLEEN een geldig JSON object terug. Voorbeeld: {"naam":"Bert-Jan","werk":"RPA Developer bij Defensie","woonplaats":"Hardenberg"}. Alleen bevestigde feiten. Alleen JSON.',
-        messages: msgs.slice(-20)
-      })
+      method:'POST', headers:{'Content-Type':'application/json','x-api-key':D.ck,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:300,
+        system:'Extraheer persoonlijke feiten uit dit gesprek. Geef ALLEEN geldig JSON terug. Voorbeeld: {"naam":"Jan","werk":"developer"}. Alleen bevestigde feiten. Alleen JSON.',
+        messages: curSess.messages.slice(-20) })
     });
     const data = await res.json();
-    const txt = data.content?.[0]?.text || '{}';
-    const parsed = JSON.parse(txt.replace(/```json|```/g, '').trim());
-    state.profiel = { ...state.profiel, ...parsed };
-    save();
-  } catch(e) { console.log('Profiel update mislukt:', e); }
+    const parsed = JSON.parse((data.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
+    D.profiel = { ...D.profiel, ...parsed }; save();
+  } catch(e) {}
 }
 
-// ════════════════════════════════════════
-// STOP ALLES
-// ════════════════════════════════════════
+// ── STOP ALLES ─────────────────────────────────────────────────
 function stopAll() {
-  stopDriveListening();
-  driveRecording = false;
-  driveConfirming = false;
-  driveSwitching = false;
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') { try { mediaRecorder.stop(); } catch(e) {} }
-  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  driveStop(); dRecOn=false; dConf=false;
+  if (mr && mr.state!=='inactive') { try{mr.stop();}catch(e){} }
+  if (micStream) { micStream.getTracks().forEach(t=>t.stop()); micStream=null; }
   window.speechSynthesis.cancel();
-  isProcessing = false; isSpeaking = false; isRecording = false;
+  isProc=false; isSpk=false; isRec=false;
 }
 
-// ════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════
+// ── INIT ───────────────────────────────────────────────────────
 renderSessions();
-autoSelectLastSession();
 renderProfiel();
-// Zorg dat sleutels uit velden worden gelezen bij init
-state.claudeKey = claudeKeyEl.value.trim() || state.claudeKey;
-state.openaiKey = openaiKeyEl.value.trim() || state.openaiKey;
-checkReady();
+chk();
 window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 window.speechSynthesis.getVoices();
 </script>
