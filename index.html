@@ -202,8 +202,12 @@ input::placeholder{color:var(--t3);}
       <div class="dot off" id="drive-dot"></div>
       <span id="drive-badge-txt">Niet verbonden — klik om in te loggen</span>
     </div>
-    <button class="bexp" id="btn-drive-auth" style="margin-top:7px;">🔗 Verbind met Google Drive</button>
-    <button class="bexp" id="btn-drive-export" style="margin-top:5px;display:none;" disabled>📤 Exporteer huidige sessie naar Drive</button>
+    <div style="display:flex;gap:7px;margin-top:7px;">
+      <input type="text" id="in-client-id" placeholder="Google OAuth Client ID (optioneel)" style="font-size:11px;padding:8px 10px;"/>
+    </div>
+    <button class="bexp" id="btn-drive-auth" style="margin-top:6px;">🔗 Verbind met Google Drive</button>
+    <button class="bexp" id="btn-drive-export" style="margin-top:5px;display:none;" disabled>📤 Exporteer sessie naar Drive</button>
+    <button class="bexp" id="btn-download-md" style="margin-top:5px;background:rgba(124,92,252,.1);color:var(--a2);border-color:rgba(124,92,252,.25);">💾 Download sessie als .md bestand</button>
   </div>
 </div>
 
@@ -221,7 +225,10 @@ input::placeholder{color:var(--t3);}
       <button class="btn bg" onclick="goBack()">← Terug</button>
       <button class="btn bg" onclick="clearChat()">Wis chat</button>
     </div>
-    <button class="bexp" id="btn-export-hand" onclick="exportToDrive()" style="max-width:300px;display:none;">📤 Sla op in Drive</button>
+    <div style="display:flex;gap:6px;max-width:300px;width:100%;">
+      <button class="bexp" id="btn-export-hand" onclick="exportToDrive()" style="display:none;flex:1;">📤 Drive</button>
+      <button class="bexp" onclick="downloadMarkdown()" style="flex:1;background:rgba(124,92,252,.1);color:var(--a2);border-color:rgba(124,92,252,.25);">💾 Download</button>
+    </div>
   </div>
 
   <!-- Rijmodus paneel -->
@@ -242,7 +249,10 @@ input::placeholder{color:var(--t3);}
       <button class="btn bg" onclick="goBack()">← Terug</button>
       <button class="btn bg" onclick="clearChat()">Wis chat</button>
     </div>
-    <button class="bexp" id="btn-export-drive" onclick="exportToDrive()" style="max-width:300px;display:none;">📤 Sla op in Drive</button>
+    <div style="display:flex;gap:6px;max-width:300px;width:100%;">
+      <button class="bexp" id="btn-export-drive" onclick="exportToDrive()" style="display:none;flex:1;">📤 Drive</button>
+      <button class="bexp" onclick="downloadMarkdown()" style="flex:1;background:rgba(124,92,252,.1);color:var(--a2);border-color:rgba(124,92,252,.25);">💾 Download</button>
+    </div>
   </div>
 </div>
 
@@ -1022,7 +1032,9 @@ let gClientId  = D.gClientId || '';
 if (D.gToken && D.gTokenExp && Date.now() < D.gTokenExp) {
   gToken = D.gToken;
 }
-if (D.gClientId) gClientId = D.gClientId;
+if (D.gClientId) {
+  gClientId = D.gClientId;
+}
 
 function updateDriveBadge() {
   const badge  = $('drive-badge');
@@ -1051,25 +1063,18 @@ function updateDriveBadge() {
 
 // ── OAUTH LOGIN ────────────────────────────────────────────────
 async function driveLogin() {
-  // Vraag Client ID als nog niet ingesteld
-  if (!gClientId) {
-    gClientId = prompt(
-      'Voer je Google OAuth Client ID in.
+  // Lees Client ID uit invoerveld
+  const inputEl = $('in-client-id');
+  const inputVal = inputEl ? inputEl.value.trim() : '';
+  if (inputVal) { gClientId = inputVal; D.gClientId = inputVal; save(); }
 
-' +
-      'Aanmaken via: console.cloud.google.com
-' +
-      '→ APIs & Services → Credentials → OAuth 2.0 Client ID
-' +
-      '→ Type: Web application
-' +
-      '→ Authorized redirect URI: ' + location.origin + location.pathname
-    );
-    if (!gClientId) return;
-    D.gClientId = gClientId; save();
+  if (!gClientId) {
+    showToast('⚠️ Voer eerst je Google Client ID in het veld hierboven in');
+    if (inputEl) inputEl.focus();
+    return;
   }
 
-  // Open OAuth popup
+  // Stuur door naar Google OAuth
   const params = new URLSearchParams({
     client_id:     gClientId,
     redirect_uri:  location.origin + location.pathname,
@@ -1077,11 +1082,7 @@ async function driveLogin() {
     scope:         GDRIVE_SCOPES,
     prompt:        'select_account'
   });
-  const url = 'https://accounts.google.com/o/oauth2/v2/auth?' + params;
-
-  // Sla op dat we wachten op OAuth
-  sessionStorage.setItem('oauth_pending', '1');
-  location.href = url;
+  location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params;
 }
 
 // ── VERWERK OAUTH REDIRECT ─────────────────────────────────────
@@ -1272,6 +1273,56 @@ function generateProfielMarkdown() {
 ');
 }
 
+// ── DOWNLOAD ALS MARKDOWN ─────────────────────────────────────
+function downloadMarkdown() {
+  const s = curSess;
+  if (!s) { showToast('Geen actieve sessie om te downloaden'); return; }
+
+  let md;
+  if (s.isMasterprompt && Object.keys(masterAntwoorden).length > 0) {
+    // Masterprompt interview export
+    const lines = [
+      '# Masterprompt Interview — Bert-Jan',
+      '',
+      '**Datum:** ' + new Date().toLocaleDateString('nl-NL'),
+      '',
+      '---',
+      '',
+      '## Antwoorden op de 6 vragen',
+      ''
+    ];
+    MASTER_VRAGEN.forEach(v => {
+      const a = masterAntwoorden[v.id];
+      lines.push('### Vraag ' + v.id + ': ' + v.thema);
+      lines.push('');
+      lines.push('**Vraag:** ' + v.vraag);
+      lines.push('');
+      lines.push('**Antwoord:** ' + (a ? a.antwoord : '*(niet beantwoord)*'));
+      lines.push('');
+    });
+    lines.push('---');
+    lines.push('');
+    lines.push('*Gegenereerd door AI Voice Assistent*');
+    md = lines.join('
+');
+  } else {
+    md = generateMarkdown(s);
+  }
+
+  const datum    = new Date().toISOString().slice(0, 10);
+  const safeName = s.name.replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_') || 'sessie';
+  const filename = safeName + '_' + datum + '.md';
+
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ Gedownload: ' + filename);
+}
+
 // ── AUTO-EXPORT NA SESSIE ──────────────────────────────────────
 async function autoExport() {
   if (!gToken || !curSess || curSess.messages.length < 2) return;
@@ -1296,7 +1347,14 @@ function showToast(msg) {
 // ── EVENT LISTENERS DRIVE ──────────────────────────────────────
 $('btn-drive-auth').addEventListener('click', driveLogin);
 $('btn-drive-export').addEventListener('click', exportToDrive);
+$('btn-download-md').addEventListener('click', downloadMarkdown);
 $('btn-master').addEventListener('click', startMasterInterview);
+
+// Herstel opgeslagen client ID in invoerveld
+if (D.gClientId) {
+  const el = $('in-client-id');
+  if (el) el.value = D.gClientId;
+}
 
 // ── AUTO-EXPORT BIJ TERUGGAAN ──────────────────────────────────
 const _origGoBack = goBack;
