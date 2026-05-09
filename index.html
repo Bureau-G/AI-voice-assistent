@@ -778,17 +778,34 @@ function drListenSess() {
 // MASTERPROMPT INTERVIEW
 // ══════════════════════════════════════════════════════
 function masterNext() {
+  // Sla altijd vragen over die al beantwoord zijn
+  while (masterIdx < MV.length && D.masterQ[MV[masterIdx].id]) {
+    masterIdx++;
+  }
   if (masterIdx >= MV.length) { masterDone(); return; }
+
   const v = MV[masterIdx];
+  const resterend = MV.length - masterIdx;
+  const al = Object.keys(D.masterQ).length;
+
+  // Bouw intro met context van al beantwoorde vragen
   const intro = `Vraag ${v.id} van ${MV.length} — ${v.thema}. `;
+
   if (curMode === 'hand') el('hs').textContent = `Vraag ${v.id}/${MV.length}: ${v.thema}`;
   else { el('ds').textContent = `Vraag ${v.id}/${MV.length}: ${v.thema}`; }
+
   curSess.messages.push({ role: 'assistant', content: intro + v.v });
   addMsg('assistant', intro + v.v);
   sv();
   say(intro + v.v, () => {
-    if (curMode === 'hand') { setRb('ready'); el('hs').textContent = `Vraag ${v.id}/${MV.length} — houd ingedrukt om te antwoorden`; el('hh').textContent = 'Laat los als je klaar bent'; }
-    else { setDr('listen','👂','LUISTERT'); el('ds').textContent = `Zeg "Start bericht" voor vraag ${v.id}`; }
+    if (curMode === 'hand') {
+      setRb('ready');
+      el('hs').textContent = `Vraag ${v.id}/${MV.length} — houd ingedrukt om te antwoorden`;
+      el('hh').textContent = 'Laat los als je klaar bent';
+    } else {
+      setDr('listen','👂','LUISTERT');
+      el('ds').textContent = `Zeg "Start bericht" voor vraag ${v.id}`;
+    }
   });
 }
 
@@ -805,12 +822,18 @@ async function masterAnswer(txt) {
   else { setDr('proc','⏳','CLAUDE'); }
 
   try {
+    // Bouw context op van alle al gegeven antwoorden
+    const alGegeven = Object.entries(D.masterQ)
+      .map(([id, qa]) => `Vraag ${id} (${qa.thema}): "${qa.vraag}" → Antwoord: "${qa.antwoord}"`)
+      .join('\n');
+    const contextStr = alGegeven ? `\n\nAl beantwoorde vragen:\n${alGegeven}` : '';
+
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type':'application/json', 'x-api-key':D.ck, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001', max_tokens: 120,
-        system: `Je bent een interviewer. Vraag gesteld: "${v.v}". Antwoord ontvangen: "${txt}". Is dit antwoord voldoende volledig? Als ja, antwoord alleen met het woord COMPLEET. Als nee, stel één korte doorvraag in het Nederlands.`,
+        model: 'claude-sonnet-4-20250514', max_tokens: 200,
+        system: `Je bent een interviewer die een masterprompt opstelt voor Bert-Jan. Je stelt gerichte vragen om hem beter te leren kennen.${contextStr}\n\nHuidige vraag (${v.id} van ${MV.length}): "${v.v}"\nAntwoord van Bert-Jan: "${txt}"\n\nBeoordeel: is dit antwoord volledig genoeg gezien de al bekende informatie? Vraag NOOIT iets wat al beantwoord is. Als het antwoord compleet is, antwoord dan ALLEEN met het woord COMPLEET. Als je nog één gerichte vervolgvraag wilt stellen, doe dat dan in één zin in het Nederlands.`,
         messages: [{ role: 'user', content: txt }]
       })
     });
@@ -820,7 +843,11 @@ async function masterAnswer(txt) {
 
     if (reply.startsWith('COMPLEET')) {
       masterIdx++;
-      say('Dank je.', () => masterNext());
+      // Sla opnieuw op om zeker te zijn
+      sv();
+      const aantalNog = MV.filter(v => !D.masterQ[v.id]).length;
+      const tekst = aantalNog > 0 ? 'Dank je. ' + aantalNog + ' ' + (aantalNog === 1 ? 'vraag' : 'vragen') + ' te gaan.' : 'Dank je.';
+      say(tekst, () => masterNext());
     } else {
       curSess.messages.push({ role: 'assistant', content: reply });
       addMsg('assistant', reply);
@@ -1044,6 +1071,18 @@ function toast(msg) {
 // ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
+
+// Sla al bekende antwoorden op zodat de app niet opnieuw vraagt
+// wat Bert-Jan al meerdere keren heeft verteld
+if (!D.masterQ[1] || D.masterQ[1].antwoord.length < 50) {
+  D.masterQ[1] = {
+    thema: 'Bureau G',
+    vraag: MV[0].v,
+    antwoord: 'Bureau G is een eenmanszaak, ik werk alleen als zzp. Bureau G is een designbureau met drie kernactiviteiten: 1 websites en webshops voor startende ondernemers inclusief logo en huisstijl, 2 drukwerk zoals flyers, folders, brochures, catalogi en visitekaartjes voor twee vaste klanten: een groothandel in veiligheidsschoenen en kleding en een uitzendbureau, 3 AI-workshops aan bedrijven in verschillende sectoren, actief sinds medio 2025.'
+  };
+  sv();
+}
+
 // Herstel laatste sessie
 if (D.sessions.length) curSess = D.sessions[D.sessions.length - 1];
 renderSess();
